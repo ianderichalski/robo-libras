@@ -1,0 +1,9 @@
+# Python 3.10
+pyFirmata==1.1.0
+opencv-python>=4.8.0
+mediapipe>=0.10.18
+numpy>=1.26.0,<2
+SpeechRecognition==3.10.4
+# pyaudio — veja instruções no README.md
+streamlit>=1.36.0
+protobuf>=4.25.3,<5
