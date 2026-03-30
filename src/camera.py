@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 
 from src.config import CAMERA_INDEX, CAMERA_WIDTH, CAMERA_HEIGHT, FINGER_PINS
+from src.recognizer import recognize
 from src import servo
 
 # caminhos do modelo
@@ -122,12 +123,14 @@ def _send_to_servos(states):
 def process_frame(
     frame_bgr: np.ndarray,
     send_servos: bool = False,
-) -> tuple[np.ndarray, dict[str, float] | None, bool]:
+) -> tuple[np.ndarray, dict[str, float] | None, bool, str | None, float]:
     """
     Processa um frame BGR e retorna:
       - frame anotado com landmarks
       - dict dos estados dos dedos (ou None)
       - se mão foi detectada
+      - letra LIBRAS reconhecida (ou None se sem mão)
+      - confiança do reconhecimento (0.0–1.0)
     """
     import mediapipe as mp
 
@@ -141,17 +144,19 @@ def process_frame(
 
     finger_states = None
     hand_detected = False
+    letter = None
+    confidence = 0.0
 
     if result.hand_landmarks:
         for landmarks in result.hand_landmarks:
             hand_detected = True
             _draw_landmarks(frame_bgr, landmarks, h, w)
             finger_states = _landmarks_to_finger_states(landmarks, h, w)
-
+            letter, confidence = recognize(finger_states)
             if send_servos:
                 _send_to_servos(finger_states)
 
-    return frame_bgr, finger_states, hand_detected
+    return frame_bgr, finger_states, hand_detected, letter, confidence
 
 # loop cli
 def run():
@@ -167,7 +172,7 @@ def run():
             if not success:
                 continue
 
-            annotated, _, _ = process_frame(frame, send_servos=True)
+            annotated, _, _, _, _ = process_frame(frame, send_servos=True)
 
             cv2.imshow("RoboLibras — Câmera", annotated)
             if cv2.waitKey(1) & 0xFF == ord("q"):
