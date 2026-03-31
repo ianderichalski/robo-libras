@@ -172,7 +172,9 @@ def run():
             if not success:
                 continue
 
-            annotated, _, _, _, _ = process_frame(frame, send_servos=True)
+            annotated, _, _, letter, confidence = process_frame(frame, send_servos=True)
+            if letter is not None:
+                print(f"[CÂMERA] Letra reconhecida: {letter} ({int(confidence * 100)}%)")
 
             cv2.imshow("RoboLibras — Câmera", annotated)
             if cv2.waitKey(1) & 0xFF == ord("q"):
