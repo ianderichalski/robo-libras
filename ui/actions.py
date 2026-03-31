@@ -8,6 +8,7 @@ from src import servo
 from src.config import CAMERA_WIDTH, CAMERA_HEIGHT, CAM_SKIP_FRAMES, CAM_HYSTERESIS, CAM_PUSH_INTERVAL
 from src.speller import spell
 from src.voice import VoiceListener
+from src.recognizer import recognize
 
 # conexão arduino
 def _friendly_serial_error(port, e):
@@ -131,6 +132,8 @@ def camera_thread(send_servos: bool, arduino_ok: bool, stop: threading.Event, q:
     last_finger_states = None
     last_hand_detected = False
     last_landmarks_norm = None
+    last_letter = None
+    last_confidence = 0.0
 
     _HYSTERESIS = CAM_HYSTERESIS
     _pending = {}
@@ -179,11 +182,14 @@ def camera_thread(send_servos: bool, arduino_ok: bool, stop: threading.Event, q:
                     sh, sw = small.shape[:2]
                     raw_states = _landmarks_to_finger_states(last_landmarks_norm, sh, sw)
                     last_finger_states = _apply_hysteresis(raw_states, last_finger_states)
+                    last_letter, last_confidence = recognize(last_finger_states)
                     if send_servos and arduino_ok:
                         _send_to_servos(last_finger_states)
                 else:
                     last_hand_detected = False
                     last_landmarks_norm = None
+                    last_letter = None
+                    last_confidence = 0.0
                     _pending = {}
 
             annotated = frame.copy()
@@ -207,6 +213,8 @@ def camera_thread(send_servos: bool, arduino_ok: bool, stop: threading.Event, q:
                 "frame": rgb,
                 "finger_states": last_finger_states,
                 "hand_detected": last_hand_detected,
+                "letter": last_letter,
+                "confidence": last_confidence
             })
 
     finally:
