@@ -35,6 +35,8 @@ def _render_video(col) -> None:
                 st.session_state.cam_frame = None
                 st.session_state.cam_finger_states = None
                 st.session_state.cam_hand_detected = False
+                st.session_state.cam_letter = None
+                st.session_state.cam_confidence = 0.0
                 st.session_state.cam_queue = queue.Queue(maxsize=2)
                 st.session_state.cam_stop = threading.Event()
                 st.rerun()
@@ -61,6 +63,8 @@ def _render_video(col) -> None:
                 st.session_state.cam_active = False
                 st.session_state.cam_finger_states = None
                 st.session_state.cam_hand_detected = False
+                st.session_state.cam_letter = None
+                st.session_state.cam_confidence = 0.0
                 st.session_state.cam_frame = None
                 st.rerun()
 
@@ -76,6 +80,8 @@ def _render_video(col) -> None:
                 st.session_state.cam_frame = latest_data["frame"]
                 st.session_state.cam_finger_states = latest_data["finger_states"]
                 st.session_state.cam_hand_detected = latest_data["hand_detected"]
+                st.session_state.cam_letter = latest_data["letter"]
+                st.session_state.cam_confidence = latest_data["confidence"]
 
             frame_data = st.session_state.cam_frame
             if frame_data is not None:
@@ -96,6 +102,12 @@ def _render_video(col) -> None:
                     '<div class="lbr-cam-status detecting"><span class="cam-dot"></span> Mão detectada — replicando movimentos</div>',
                     unsafe_allow_html=True,
                 )
+                if st.session_state.cam_letter is not None:
+                    confidence_pct = int(st.session_state.cam_confidence * 100)
+                    st.markdown(
+                        f'<div class="lbr-cam-status detecting">Letra reconhecida: <strong>{st.session_state.cam_letter}</strong> — {confidence_pct}% de confiança</div>',
+                        unsafe_allow_html=True,
+                    )
             else:
                 st.markdown(
                     '<div class="lbr-cam-status waiting"><span class="cam-dot"></span> Aguardando detecção...</div>',
