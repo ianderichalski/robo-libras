@@ -18,6 +18,8 @@ _DEFAULTS = {
     "cam_finger_states": None,
     "cam_hand_detected": False,
     "cam_frame": None,
+    "cam_letter": None,
+    "cam_confidence": 0.0,
     "cam_stop": threading.Event(),
     "cam_queue": queue.Queue(maxsize=2),
     "voice_delay": 0.8,
