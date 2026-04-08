@@ -34,41 +34,7 @@ Um dos principais desafios em tecnologia assistiva para a Língua Brasileira de 
 
 ### Visão Geral
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     CAMADA DE ENTRADA                       │
-│                                                             │
-│   ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐  │
-│   │  Texto (UI)  │  │  Voz (mic)   │  │  Câmera (webcam) │  │
-│   └──────┬───────┘  └──────┬───────┘  └────────┬─────────┘  │
-│          │                 │                   │            │
-│          │         Google Speech API     MediaPipe          │
-│          │         SpeechRecognition     Hand Landmarker    │
-└──────────┼─────────────────┼───────────────────┼────────────┘
-           │                 │                   │
-           └─────────────────┴───────────────────┘
-                             │
-                    pose: dict[str, float]
-                    (5 dedos × 4 níveis)
-                             │
-┌────────────────────────────┼────────────────────────────────┐
-│                   CAMADA DE CONTROLE                        │
-│                            │                                │
-│            src/servo.py · src/speller.py                    │
-│            Mapeamento pose → ângulos (SERVO_ANGLES)         │
-└────────────────────────────┼────────────────────────────────┘
-                             │
-                    pyFirmata · USB Serial
-                    57600 baud · StandardFirmata
-                             │
-┌────────────────────────────┼────────────────────────────────┐
-│                  CAMADA DE HARDWARE                         │
-│                            │                                │
-│              Arduino Uno · 5× Servo SG90                    │
-│              Mão robótica impressa em 3D                    │
-│              Acionamento por tendões                        │
-└─────────────────────────────────────────────────────────────┘
-```
+<img src="docs/arquitetura_sistema.png" alt="Demonstração  mão robótica" width="600">
 
 ### Modalidades de entrada
 
@@ -253,8 +219,8 @@ Ao concluir todos os dedos, o script imprime o bloco `SERVO_ANGLES` completo par
 │   ├── servo.py              # Controlador de hardware via pyFirmata
 │   ├── speller.py            # Motor de soletração com suporte a callbacks
 │   ├── voice.py              # Listener de voz assíncrono (threading)
-│   └── camera.py             # Pipeline de câmera (MediaPipe + OpenCV)
-│
+│   ├── camera.py             # Pipeline de câmera (MediaPipe + OpenCV)
+│   └── recognizer.py         # Classificador KNN para reconhecimento de letras
 ├── ui/                       # Interface Streamlit (apresentação)
 │   ├── styles.py             # CSS customizado
 │   ├── state.py              # Inicialização do session_state
@@ -294,8 +260,7 @@ Ao concluir todos os dedos, o script imprime o bloco `SERVO_ANGLES` completo par
 A versão 1.0 do projeto cobre o alfabeto manual da LIBRAS com uma mão robótica e três modalidades de entrada. As evoluções planejadas para versões futuras são:
  
 **v1.x — Melhorias incrementais**
-- Reconhecimento de letras da LIBRAS pela câmera em tempo real, identificando automaticamente qual sinal o usuário está formando com a mão
-- Aprimoramento da detecção de gestos no modo câmera, com melhor robustez a variações de iluminação e posicionamento da mão
+- Reconhecimento de gestos dinâmicos via câmera com modelo pré-treinado em dataset real, substituindo o classificador KNN atual
 - Refinamento do processo de calibração dos servos, tornando-o mais guiado e reproduzível
 - Melhorias na interface web, com foco em usabilidade e feedback visual em tempo real
  
