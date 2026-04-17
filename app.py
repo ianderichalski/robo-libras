@@ -25,12 +25,11 @@ hcol_main, hcol_conn = st.columns([5, 2], gap="large")
 with hcol_main:
     st.markdown('''
     <div class="lbr-hero">
-        <div class="lbr-hero-eyebrow">Tecnologia Assistiva</div>
-        <div class="lbr-hero-title">🤟 RoboLibras</div>
+        <div class="lbr-hero-title">RoboLibras</div>
         <div class="lbr-hero-sub">
-            Sistema multimodal de mão robótica para reprodução do alfabeto manual da
-            <strong>Língua Brasileira de Sinais</strong> em tempo real
-            via texto, voz ou espelhamento por câmera.
+            Objeto de aprendizagem para o ensino do alfabeto manual da
+            <strong>Língua Brasileira de Sinais</strong> —
+            explore, pratique e aprenda por texto, voz ou câmera.
         </div>
     </div>
     ''', unsafe_allow_html=True)
