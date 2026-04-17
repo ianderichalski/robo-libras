@@ -9,7 +9,8 @@
 
 ---
 
-<h4>RoboLibras: Um Sistema Robótico Assistivo Multimodal de Baixo Custo para Reconhecimento e Reprodução Acessível do Alfabeto Manual da LIBRAS</h4>
+<h4>RoboLibras: Objeto de Aprendizagem Multimodal para o Ensino do Alfabeto Manual da LIBRAS</h4>
+
 
   <a href="#arquitetura-do-sistema">Arquitetura do Sistema</a> •
   <a href="#hardware">Hardware</a> •
@@ -28,7 +29,7 @@
 
 ## Resumo
 
-Um dos principais desafios em tecnologia assistiva para a Língua Brasileira de Sinais (LIBRAS) é prover representação física acessível e em tempo real dos sinais manuais, considerando que soluções existentes são frequentemente proprietárias ou dependem de infraestrutura computacional robusta. Este trabalho apresenta o RoboLibras, um sistema de baixo custo e reproduzível que integra hardware acessível e software de código aberto para a reprodução do alfabeto manual da LIBRAS. O sistema combina três modalidades de entrada — texto, voz e gestos via câmera — com cinco servomotores controlados por Arduino. A detecção de pose da mão em tempo real e um classificador baseado em aprendizado de máquina permitem o reconhecimento automático de 32 sinais (26 letras e 6 dígitos). Uma interface web interativa permite operação e visualização do sistema. Considerando que cerca de 2,3 milhões de brasileiros possuem deficiência auditiva severa (IBGE, 2019), o RoboLibras contribui para facilitar aprendizado e comunicação inclusiva. Resultados experimentais demonstram a viabilidade de sistemas robóticos assistivos multimodais utilizando hardware acessível, evidenciando aplicações potenciais em contextos educacionais e de inclusão social.
+O ensino de Língua Brasileira de Sinais (LIBRAS) em contextos inclusivos enfrenta a escassez de recursos didáticos interativos que permitam a visualização concreta dos sinais manuais. Este trabalho apresenta o RoboLibras, um objeto de aprendizagem para o ensino do alfabeto manual da LIBRAS que integra três modalidades de interação — texto digitado, voz e gestos via câmera — com a reprodução física dos sinais por uma mão robótica de baixo custo. O sistema utiliza visão computacional e aprendizado de máquina para reconhecer a pose da mão do usuário em tempo real, oferecendo feedback imediato sobre o sinal realizado. A interface web disponibiliza modos de exploração livre, soletração guiada e prática com a câmera, permitindo uso tanto pelo professor quanto pelo estudante. O RoboLibras fundamenta-se nos princípios de aprendizagem ativa e multimodalidade, atendendo a diferentes estilos de aprendizagem e favorecendo a educação inclusiva.
 
 ## Arquitetura do Sistema
 

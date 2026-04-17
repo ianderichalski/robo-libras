@@ -16,7 +16,7 @@ def render(tab) -> None:
 def _render_left(col) -> None:
     with col:
 
-        st.markdown('<div class="lbr-section">Entrada de Texto</div>', unsafe_allow_html=True)
+        st.markdown('<div class="lbr-section">Praticar Soletração</div>', unsafe_allow_html=True)
         text_input = st.text_input(
             "Texto", placeholder="Digite letras, números ou palavras...",
             label_visibility="collapsed", key="input_texto"
@@ -47,7 +47,7 @@ def _render_left(col) -> None:
             )
             render_badges(st.session_state.current_text, st.session_state.current_char)
 
-        st.markdown('<div class="lbr-section">Entrada por Voz</div>', unsafe_allow_html=True)
+        st.markdown('<div class="lbr-section">Praticar por Voz</div>', unsafe_allow_html=True)
         if not st.session_state.mic_active:
             st.markdown('<div class="lbr-mic idle">🎙  Microfone desligado</div>', unsafe_allow_html=True)
             if st.button("🎙  Ligar microfone", width='stretch', disabled=not st.session_state.arduino_ok):
@@ -72,7 +72,7 @@ def _render_left(col) -> None:
                 unsafe_allow_html=True,
             )
 
-        st.markdown('<div class="lbr-section">Controles Manuais</div>', unsafe_allow_html=True)
+        st.markdown('<div class="lbr-section">Exploração Livre</div>', unsafe_allow_html=True)
         ca, cb, cc = st.columns(3)
         with ca:
             if st.button("🖐  Abrir", width='stretch',

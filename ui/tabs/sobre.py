@@ -22,17 +22,18 @@ def _render_hero() -> None:
     st.markdown(f"""
     <div class="about-hero" style="display:flex;align-items:center;gap:24px;">
         <div style="flex:3">
-            <h1>O que é este projeto?</h1>
-            <div class="tagline">Tecnologia assistiva de baixo custo para inclusão de pessoas surdas.</div>
+            <h1>O que é o RoboLibras?</h1>
+            <div class="tagline">Aprender LIBRAS de forma concreta, interativa e inclusiva.</div>
             <div class="abstract">
-                <strong style="color:#E8E9F0">RoboLibras</strong> é uma iniciativa de pesquisa aplicada
-                dedicada à concepção de tecnologias assistivas de baixo custo com impacto social mensurável —
-                uma mão robótica impressa em 3D que recebe comandos por <strong>texto digitado</strong>,
-                <strong>voz</strong> ou <strong>espelhamento em tempo real pela câmera</strong> e reproduz
-                fisicamente cada letra do alfabeto manual da LIBRAS por meio de 5 servomotores controlados
-                via Arduino. O projeto situa-se na interseção entre <em>robótica educacional</em>,
-                <em>visão computacional</em> e <em>acessibilidade linguística</em>, com foco em soluções
-                reproduzíveis usando hardware acessível (Arduino + impressão 3D) e software 100% open-source.
+                O <strong style="color:#E8E9F0">RoboLibras</strong> é um objeto de aprendizagem 
+                para o ensino do alfabeto manual da LIBRAS que integra três modalidades de interação — 
+                <strong>texto digitado</strong>, <strong>voz</strong> e 
+                <strong>gestos via câmera</strong> — com a reprodução física dos sinais por uma 
+                mão robótica. O estudante visualiza cada sinal em tempo real, compreendendo 
+                a posição exata dos dedos de forma concreta e dinâmica. Desenvolvido com 
+                hardware acessível e software de código aberto, o sistema pode ser utilizado 
+                por professores e estudantes diretamente em sala de aula, promovendo 
+                <em>aprendizagem ativa</em> e <em>educação inclusiva</em>.
             </div>
         </div>
         <div style="flex:1;min-width:160px">{img_tag}</div>
@@ -40,13 +41,12 @@ def _render_hero() -> None:
     """, unsafe_allow_html=True)
 
 def _render_metrics() -> None:
-    m1, m2, m3, m4, m5 = st.columns(5)
+    m1, m2, m3, m4 = st.columns(4)
     for col, val, lbl in [
-        (m1, "5",  "Servomotores"),
-        (m2, "4",  "Níveis de Flexão"),
-        (m3, "32", "Sinais Mapeados"),
-        (m4, "21", "Landmarks"),
-        (m5, "3",  "Modos de Entrada"),
+        (m1, "32", "Sinais ensináveis"),
+        (m2, "3",  "Modalidades de aprendizagem"),
+        (m3, "A–Z", "Alfabeto manual completo"),
+        (m4, "0–5", "Dígitos suportados"),
     ]:
         with col:
             st.markdown(f"""
@@ -62,23 +62,26 @@ def _render_motivation() -> None:
     st.markdown("""
     <div class="about-card">
         <p style="color:#9A9CB8;font-size:0.83rem;line-height:1.8;margin-bottom:16px">
-            A <strong style="color:#E8E9F0">LIBRAS</strong> é reconhecida como meio legal de comunicação no Brasil 
-            (Lei nº 10.436/2002 e Decreto nº 5.626/2005) e representa o principal meio de comunicação para uma parcela significativa da população surda. 
-            Dados recentes indicam que cerca de <strong style="color:#EF6603">2,3 milhões de brasileiros possuem deficiência auditiva</strong>, 
-            podendo ultrapassar 10 milhões quando considerados todos os graus de perda auditiva. Ainda assim, a LIBRAS permanece pouco difundida entre a população ouvinte, 
-            gerando barreiras de comunicação em contextos como educação, serviços públicos e interações cotidianas.
+            A <strong style="color:#E8E9F0">LIBRAS</strong> é reconhecida como meio legal de comunicação 
+            no Brasil (Lei nº 10.436/2002) e sua presença nas escolas é obrigatória desde o 
+            Decreto nº 5.626/2005. No entanto, o ensino do alfabeto manual ainda enfrenta um 
+            desafio concreto: a <strong style="color:#EF6603">escassez de recursos didáticos interativos</strong> 
+            que permitam ao estudante visualizar, explorar e praticar os sinais de forma dinâmica 
+            em sala de aula. Materiais impressos e vídeos estáticos limitam o engajamento e 
+            dificultam a compreensão da posição exata dos dedos em cada sinal.
         </p>
         <p style="color:#9A9CB8;font-size:0.83rem;line-height:1.8;margin-bottom:16px">
-            Embora existam soluções tecnológicas voltadas à tradução e mediação da língua de sinais, muitas apresentam 
-            <strong style="color:#EF6603">alto custo</strong>, dependência de infraestrutura complexa ou baixa acessibilidade. 
-            Esse cenário limita sua adoção em larga escala, especialmente em ambientes educacionais e regiões com menos recursos, 
-            reforçando a necessidade de alternativas mais acessíveis e eficientes.
+            Esse cenário é ainda mais relevante considerando que cerca de 
+            <strong style="color:#EF6603">2,3 milhões de brasileiros possuem deficiência auditiva severa</strong> 
+            (IBGE, 2022), reforçando a necessidade de práticas pedagógicas inclusivas que aproximem 
+            estudantes ouvintes e surdos. A formação de professores e o acesso a ferramentas 
+            acessíveis são pilares fundamentais para que a inclusão aconteça de fato nas escolas.
         </p>
         <div style="border-left:3px solid #EF6603;padding-left:16px">
             <p style="color:#C8CAE0;font-size:0.83rem;line-height:1.8;margin:0">
-                Este projeto é uma alternativa acessível: uma mão robótica que reproduz fisicamente
-                o alfabeto manual da LIBRAS a partir de texto, voz ou gestos — pensada para facilitar
-                o aprendizado e aproximar pessoas.
+                O RoboLibras nasce como resposta pedagógica a esse desafio — um objeto de 
+                aprendizagem que combina texto, voz e visão computacional para tornar o ensino 
+                do alfabeto manual da LIBRAS concreto, interativo e acessível em qualquer sala de aula.
             </p>
         </div>
     </div>
