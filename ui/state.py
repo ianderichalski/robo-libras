@@ -23,6 +23,14 @@ _DEFAULTS = {
     "cam_stop": threading.Event(),
     "cam_queue": queue.Queue(maxsize=2),
     "voice_delay": 0.8,
+    "aula_index": 0,
+    "aula_vistos": set(),
+    "quiz_char": "",
+    "quiz_opcoes": [],
+    "quiz_respondido": False,
+    "quiz_acerto": False,
+    "quiz_acertos": 0,
+    "quiz_total": 0,
 }
 
 def init() -> None:
