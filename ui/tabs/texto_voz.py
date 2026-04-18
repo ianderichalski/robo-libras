@@ -8,10 +8,21 @@ from ui.actions import start_spell
 
 def render(tab) -> None:
     with tab:
-        col_left, col_right = st.columns([2, 3], gap="large")
+        mode = st.radio(
+            "Modo",
+            ["Soletração Livre", "Modo Aula", "Quiz"],
+            horizontal=True,
+            label_visibility="collapsed",
+        )
 
-        _render_left(col_left)
-        _render_right(col_right)
+        if mode == "Soletração Livre":
+            col_left, col_right = st.columns([2, 3], gap="large")
+            _render_left(col_left)
+            _render_right(col_right)
+        elif mode == "Modo Aula":
+            _render_aula()
+        elif mode == "Quiz":
+            _render_quiz()
 
 def _render_left(col) -> None:
     with col:
@@ -181,3 +192,156 @@ def _render_right(col) -> None:
             st.session_state.current_char = char_q
             st.session_state.current_pose = get_pose(char_q)
             st.rerun()
+
+def _render_aula() -> None:
+    from src.poses import POSES
+
+    chars = [str(i) for i in range(6)] + [chr(i) for i in range(65, 91)]
+    chars = [c for c in chars if c in POSES]
+
+    if "aula_index" not in st.session_state:
+        st.session_state.aula_index = 0
+    if "aula_vistos" not in st.session_state:
+        st.session_state.aula_vistos = set()
+
+    idx = st.session_state.aula_index
+    char = chars[idx]
+    st.session_state.aula_vistos.add(char)
+
+    col_left, col_right = st.columns([2, 3], gap="large")
+
+    with col_left:
+        st.markdown('<div class="lbr-section">Sinal Atual</div>', unsafe_allow_html=True)
+        render_char(char)
+        render_dedos(POSES[char])
+        render_legend()
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            if st.button("← Anterior", width="stretch", disabled=idx == 0, key="aula_prev"):
+                st.session_state.aula_index -= 1
+                st.rerun()
+        with c2:
+            st.markdown(
+                f"<div style='text-align:center;font-size:0.8rem;color:#9A9CB8;padding-top:8px'>"
+                f"{idx + 1} / {len(chars)}</div>",
+                unsafe_allow_html=True,
+            )
+        with c3:
+            if st.button("Próxima →", width="stretch", disabled=idx == len(chars) - 1, key="aula_next"):
+                st.session_state.aula_index += 1
+                st.rerun()
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("▶  Executar na mão robótica", width="stretch",
+                     disabled=not st.session_state.arduino_ok, key="aula_exec"):
+            start_spell(char, st.session_state.voice_delay)
+            st.rerun()
+
+    with col_right:
+        st.markdown('<div class="lbr-section">Progresso</div>', unsafe_allow_html=True)
+        vistos = len(st.session_state.aula_vistos)
+        total = len(chars)
+        pct = int(vistos / total * 100)
+        st.markdown(f"""
+        <div class="lbr-card">
+            <h4>{vistos} de {total} sinais explorados ({pct}%)</h4>
+            <div style="background:#525680;border-radius:4px;height:8px;margin-top:8px">
+                <div style="background:#EF6603;width:{pct}%;height:8px;border-radius:4px"></div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown('<div class="lbr-section">Navegar no Alfabeto</div>', unsafe_allow_html=True)
+        for row in [chars[i:i+8] for i in range(0, len(chars), 8)]:
+            bcols = st.columns(len(row))
+            for bcol, c in zip(bcols, row):
+                with bcol:
+                    if st.button(c, key=f"aula_chr_{c}",
+                                 type="primary" if c == char else "secondary"):
+                        st.session_state.aula_index = chars.index(c)
+                        st.rerun()
+
+def _render_quiz() -> None:
+    import random
+    from src.poses import POSES
+
+    chars = [c for c in POSES if c != " "]
+
+    if not st.session_state.quiz_char:
+        st.session_state.quiz_char = random.choice(chars)
+        st.session_state.quiz_opcoes = []
+        st.session_state.quiz_respondido = False
+        st.session_state.quiz_acerto = False
+
+    char = st.session_state.quiz_char
+
+    if not st.session_state.quiz_opcoes:
+        erradas = random.sample([c for c in chars if c != char], 3)
+        opcoes = erradas + [char]
+        random.shuffle(opcoes)
+        st.session_state.quiz_opcoes = opcoes
+
+    col_left, col_right = st.columns([2, 3], gap="large")
+
+    with col_left:
+        st.markdown('<div class="lbr-section">Sinal na Mão Robótica</div>', unsafe_allow_html=True)
+        if not st.session_state.quiz_respondido:
+            render_char("?")
+        else:
+            render_char(char)
+        render_dedos(POSES[char])
+        render_legend()
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("▶  Executar sinal", width="stretch",
+                     disabled=not st.session_state.arduino_ok, key="quiz_exec"):
+            start_spell(char, st.session_state.voice_delay)
+            st.rerun()
+
+    with col_right:
+        st.markdown('<div class="lbr-section">Qual letra é esse sinal?</div>', unsafe_allow_html=True)
+
+        if not st.session_state.quiz_respondido:
+            bcols = st.columns(2)
+            for i, opcao in enumerate(st.session_state.quiz_opcoes):
+                with bcols[i % 2]:
+                    if st.button(opcao, width="stretch", key=f"quiz_op_{opcao}"):
+                        st.session_state.quiz_respondido = True
+                        st.session_state.quiz_acerto = opcao == char
+                        st.session_state.quiz_total += 1
+                        if opcao == char:
+                            st.session_state.quiz_acertos += 1
+                        st.rerun()
+        else:
+            if st.session_state.quiz_acerto:
+                st.markdown(
+                    '<div class="lbr-recognized">✅  Correto!</div>',
+                    unsafe_allow_html=True,
+                )
+            else:
+                st.markdown(
+                    f'<div class="lbr-recognized">❌  Errado! O sinal era <strong>{char}</strong>.</div>',
+                    unsafe_allow_html=True,
+                )
+
+            if st.button("Próxima →", width="stretch", key="quiz_next"):
+                st.session_state.quiz_char = random.choice(chars)
+                st.session_state.quiz_opcoes = []
+                st.session_state.quiz_respondido = False
+                st.session_state.quiz_acerto = False
+                st.rerun()
+
+        st.markdown('<div class="lbr-section">Pontuação</div>', unsafe_allow_html=True)
+        acertos = st.session_state.quiz_acertos
+        total = st.session_state.quiz_total
+        pct = int(acertos / total * 100) if total > 0 else 0
+        st.markdown(f"""
+        <div class="lbr-card">
+            <h4>{acertos} de {total} corretos ({pct}%)</h4>
+            <div style="background:#525680;border-radius:4px;height:8px;margin-top:8px">
+                <div style="background:#EF6603;width:{pct}%;height:8px;border-radius:4px"></div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
