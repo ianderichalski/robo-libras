@@ -218,19 +218,6 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
     with col_cam:
         with col_cam:
             st.markdown('<div class="lbr-section">Câmera — Siga o Sinal</div>', unsafe_allow_html=True)
-            if submodo == "A → Z":
-                st.markdown("""<p style='font-size:0.8rem;color:#9A9CB8;margin:0 0 10px'>
-                    Pratique o alfabeto em sequência. Faça o sinal da letra indicada — quando
-                    reconhecido corretamente, o sistema avança automaticamente. Use
-                    <strong>Pular →</strong> para avançar ou <strong>← Anterior</strong>
-                    para revisar.
-                </p>""", unsafe_allow_html=True)
-            else:
-                st.markdown("""<p style='font-size:0.8rem;color:#9A9CB8;margin:0 0 10px'>
-                    Letras em ordem aleatória para testar o que você já aprendeu. Faça o sinal
-                    correto e tente manter o maior número de acertos consecutivos. 
-                    Bata seu recorde de 🔥!
-                </p>""", unsafe_allow_html=True)
 
         if not st.session_state.cam_active:
             if st.button("▶  Iniciar câmera", width="stretch", key="sinal_cam_start"):
@@ -315,6 +302,46 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
             </div>
             """, unsafe_allow_html=True)
 
+        st.markdown('<div class="lbr-section">Como Funciona</div>', unsafe_allow_html=True)
+        if submodo == "A → Z":
+            st.markdown("""
+            <div class="lbr-step">
+                <div class="lbr-step-num">1</div>
+                <div class="lbr-step-text">O sistema exibe a <strong>letra-alvo</strong> e a posição dos dedos correspondente.</div>
+            </div>
+            <div class="lbr-step">
+                <div class="lbr-step-num">2</div>
+                <div class="lbr-step-text">Faça o sinal da letra para a câmera com a mão bem iluminada e visível.</div>
+            </div>
+            <div class="lbr-step">
+                <div class="lbr-step-num">3</div>
+                <div class="lbr-step-text">Quando reconhecido com <strong>70% ou mais</strong> de confiança, o sistema avança automaticamente.</div>
+            </div>
+            <div class="lbr-step">
+                <div class="lbr-step-num">4</div>
+                <div class="lbr-step-text">Use <strong>Pular →</strong> para avançar sem acertar ou <strong>← Anterior</strong> para revisar.</div>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown("""
+            <div class="lbr-step">
+                <div class="lbr-step-num">1</div>
+                <div class="lbr-step-text">Uma letra aleatória é exibida — faça o sinal correspondente para a câmera.</div>
+            </div>
+            <div class="lbr-step">
+                <div class="lbr-step-num">2</div>
+                <div class="lbr-step-text">Acertos consecutivos aumentam seu <strong>🔥 streak</strong>.</div>
+            </div>
+            <div class="lbr-step">
+                <div class="lbr-step-num">3</div>
+                <div class="lbr-step-text">Travou em algum sinal? Clique em <strong>💡 Ver dica</strong> para ver a posição dos dedos.</div>
+            </div>
+            <div class="lbr-step">
+                <div class="lbr-step-num">4</div>
+                <div class="lbr-step-text">Quanto mais você praticar, mais natural e rápido fica!</div>
+            </div>
+            """, unsafe_allow_html=True)
+
     with col_info:
         # display do sinal alvo
         if st.session_state.sinal_acerto_flag:
@@ -340,9 +367,9 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
                 f'<div class="lbr-recognized">{emoji} {streak} acerto{"s" if streak > 1 else ""} seguido{"s" if streak > 1 else ""}!</div>',
                 unsafe_allow_html=True,
             )
-
-        render_dedos(POSES.get(target))
-        render_legend()
+        with st.expander("💡 Ver dica — posição dos dedos"):
+            render_dedos(POSES.get(target))
+            render_legend()
 
         # grade de progresso (só no A→Z)
         if submodo == "A → Z":

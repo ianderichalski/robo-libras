@@ -17,14 +17,14 @@ def render(tab) -> None:
 
         if mode == "Soletração Livre":
             col_left, col_right = st.columns([2, 3], gap="large")
-            _render_left(col_left)
+            _render_left(col_left, mode)
             _render_right(col_right)
         elif mode == "Modo Aula":
             _render_aula()
         elif mode == "Quiz":
             _render_quiz()
 
-def _render_left(col) -> None:
+def _render_left(col, mode="Soletração Livre") -> None:
     with col:
 
         st.markdown('<div class="lbr-section">Praticar Soletração</div>', unsafe_allow_html=True)
@@ -262,6 +262,25 @@ def _render_aula() -> None:
                                  type="primary" if c == char else "secondary"):
                         st.session_state.aula_index = chars.index(c)
                         st.rerun()
+    st.markdown('<div class="lbr-section">Como Funciona</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="lbr-step">
+        <div class="lbr-step-num">1</div>
+        <div class="lbr-step-text">Navegue pelo alfabeto com <strong>Anterior</strong> e <strong>Próxima</strong>.</div>
+    </div>
+    <div class="lbr-step">
+        <div class="lbr-step-num">2</div>
+        <div class="lbr-step-text">Observe a <strong>posição dos dedos</strong> no painel ao lado para cada sinal.</div>
+    </div>
+    <div class="lbr-step">
+        <div class="lbr-step-num">3</div>
+        <div class="lbr-step-text">Clique em <strong>Executar na mão robótica</strong> para ver o sinal reproduzido fisicamente.</div>
+    </div>
+    <div class="lbr-step">
+        <div class="lbr-step-num">4</div>
+        <div class="lbr-step-text">Acompanhe seu <strong>progresso</strong> — quantos sinais já explorou nessa sessão.</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 def _render_quiz() -> None:
     import random
@@ -299,6 +318,26 @@ def _render_quiz() -> None:
                      disabled=not st.session_state.arduino_ok, key="quiz_exec"):
             start_spell(char, st.session_state.voice_delay)
             st.rerun()
+
+        st.markdown('<div class="lbr-section">Como Funciona</div>', unsafe_allow_html=True)
+        st.markdown("""
+        <div class="lbr-step">
+            <div class="lbr-step-num">1</div>
+            <div class="lbr-step-text">O sistema exibe a <strong>posição dos dedos</strong> de um sinal do alfabeto LIBRAS.</div>
+        </div>
+        <div class="lbr-step">
+            <div class="lbr-step-num">2</div>
+            <div class="lbr-step-text">Escolha entre as <strong>4 opções</strong> qual letra corresponde ao sinal.</div>
+        </div>
+        <div class="lbr-step">
+            <div class="lbr-step-num">3</div>
+            <div class="lbr-step-text">Receba <strong>feedback imediato</strong> — acerto ou erro com a resposta correta.</div>
+        </div>
+        <div class="lbr-step">
+            <div class="lbr-step-num">4</div>
+            <div class="lbr-step-text">Acompanhe sua <strong>pontuação</strong> ao longo da sessão.</div>
+        </div>
+        """, unsafe_allow_html=True)
 
     with col_right:
         st.markdown('<div class="lbr-section">Qual letra é esse sinal?</div>', unsafe_allow_html=True)
