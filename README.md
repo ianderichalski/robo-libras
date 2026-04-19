@@ -155,7 +155,7 @@ SERIAL_PORT = "COM4"               # Windows
 streamlit run app.py
 ```
 
-Abre automaticamente no navegador. Disponibiliza os três modos de entrada, visualização em tempo real do estado de cada dedo e painel de conexão com o Arduino.
+Abre automaticamente no navegador. Disponibiliza todos os modos de aprendizagem — Modo Aula, Quiz, Siga o Sinal e Soletração Livre. Os modos Aula, Quiz e Siga o Sinal funcionam sem Arduino conectado.
 
 ### Interface de Linha de Comando
 
@@ -163,7 +163,7 @@ Abre automaticamente no navegador. Disponibiliza os três modos de entrada, visu
 python main.py
 ```
 
-Menu interativo com os modos Voz, Texto, Câmera e Teste dos servos.
+Menu interativo com os modos Voz, Texto, Câmera e Teste dos servos. Requer Arduino conectado.
 
 ## Calibração dos Servos
 
@@ -254,25 +254,14 @@ Ao concluir todos os dedos, o script imprime o bloco `SERVO_ANGLES` completo par
 - **Modo câmera:** a detecção de landmarks pelo MediaPipe opera com apenas uma mão por frame e requer iluminação adequada e contraste com o fundo
 - **Modo voz:** depende de conexão com a internet e da disponibilidade da Google Speech API; ruído ambiente pode degradar o reconhecimento
 - **Calibração:** os ângulos são específicos ao modelo físico utilizado e não são transferíveis diretamente a outros kits de mão robótica
-- **Dígitos 6–9:** os sinais de 6 a 9 em LIBRAS requerem duas mãos simultâneas e não são suportados nesta versão de mão única
+- **Dígitos 6–9:** os sinais de 6 a 9 em LIBRAS requerem duas mãos simultâneas e não são suportados nesta versão
+- **Arduino opcional:** os modos Aula, Quiz e Siga o Sinal funcionam sem Arduino conectado — apenas a Soletração Livre requer a mão robótica
 
 ## Trabalhos Futuros
 
-A versão 1.0 do projeto cobre o alfabeto manual da LIBRAS com uma mão robótica e três modalidades de entrada. As evoluções planejadas para versões futuras são:
- 
-**v1.x — Melhorias incrementais**
-- Reconhecimento de gestos dinâmicos via câmera com modelo pré-treinado em dataset real, substituindo o classificador KNN atual
-- Refinamento do processo de calibração dos servos, tornando-o mais guiado e reproduzível
-- Melhorias na interface web, com foco em usabilidade e feedback visual em tempo real
- 
-**v2.0 — Suporte a duas mãos**
-- Integração de uma segunda mão robótica para suporte aos dígitos 6–9 e sinais compostos do alfabeto manual da LIBRAS, que requerem uso simultâneo das duas mãos
-- Sincronização em tempo real entre as duas mãos via dois Arduinos operando em paralelo
- 
-**v3.0 — Interface conversacional com LLM**
-- Integração com um modelo de linguagem para tradução de texto ou voz diretamente para sinais completos de palavras em LIBRAS — não soletração letra por letra, mas o gesto real de cada palavra como a língua funciona de fato
-- O fluxo previsto: `input → LLM → texto → tradutor LIBRAS → sinal da palavra → 2 mãos robóticas`
-- Objetivo: tornar o sistema um canal de comunicação real e natural entre ouvintes e pessoas surdas
+**v2.0 — Expansão para LIBRAS completa**
+- Suporte a palavras e frases completas em LIBRAS, além do alfabeto manual
+- Segunda mão robótica para suporte aos dígitos 6–9 e sinais compostos
 
 ## Referências
 
