@@ -7,3 +7,4 @@ env/
 Thumbs.db
 desktop.ini
 models/*.task
+data/

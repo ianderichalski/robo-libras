@@ -9,6 +9,7 @@ from src.config import CAMERA_WIDTH, CAMERA_HEIGHT, CAM_SKIP_FRAMES, CAM_HYSTERE
 from src.speller import spell
 from src.voice import VoiceListener
 from src.recognizer import recognize
+from src.camera import _get_detector, _landmarks_to_finger_states, _landmarks_to_vector, _send_to_servos, _draw_landmarks
 
 # conexão arduino
 def _friendly_serial_error(port, e):
@@ -99,7 +100,6 @@ def process_voice(delay: float) -> None:
 def camera_thread(send_servos: bool, arduino_ok: bool, stop: threading.Event, q: queue.Queue) -> None:
     import platform
     import mediapipe as mp
-    from src.camera import _get_detector, _landmarks_to_finger_states, _send_to_servos, _draw_landmarks
 
     backend = cv2.CAP_DSHOW if platform.system() == "Windows" else cv2.CAP_ANY
     cap = cv2.VideoCapture(0, backend)
@@ -182,7 +182,8 @@ def camera_thread(send_servos: bool, arduino_ok: bool, stop: threading.Event, q:
                     sh, sw = small.shape[:2]
                     raw_states = _landmarks_to_finger_states(last_landmarks_norm, sh, sw)
                     last_finger_states = _apply_hysteresis(raw_states, last_finger_states)
-                    last_letter, last_confidence = recognize(last_finger_states)
+                    last_letter, last_confidence = recognize(last_finger_states, _landmarks_to_vector(last_landmarks_norm))
+                    
                     if send_servos and arduino_ok:
                         _send_to_servos(last_finger_states)
                 else:
