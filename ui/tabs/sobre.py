@@ -8,6 +8,7 @@ def render(tab) -> None:
         _render_motivation()
         _render_technology()
         _render_how_to_use()
+        _render_professor()
         _render_footer()
 
 def _render_hero() -> None:
@@ -44,9 +45,9 @@ def _render_metrics() -> None:
     m1, m2, m3, m4 = st.columns(4)
     for col, val, lbl in [
         (m1, "32", "Sinais ensináveis"),
-        (m2, "3",  "Modalidades de aprendizagem"),
-        (m3, "A–Z", "Alfabeto manual completo"),
-        (m4, "0–5", "Dígitos suportados"),
+        (m2, "3",  "Modos de aprendizagem"),
+        (m3, "3",  "Modalidades de entrada"),
+        (m4, "A–Z", "Alfabeto manual completo"),
     ]:
         with col:
             st.markdown(f"""
@@ -118,27 +119,61 @@ def _render_how_to_use() -> None:
     with cu1:
         st.markdown("""
         <div style="background:#2F324D;border:1px solid #525680;border-top:2px solid #EF6603;border-radius:8px;padding:14px;height:100%">
-            <div style="font-size:0.7rem;font-weight:700;color:#EF6603;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">① Modo Texto</div>
-            <p style="font-size:0.76rem;color:#9A9CB8;line-height:1.65;margin:0">Conecte o Arduino na aba lateral, digite a palavra desejada no campo de texto e clique em <strong>Soletrar</strong>. A mão reproduzirá cada letra sequencialmente.</p>
+            <div style="font-size:0.7rem;font-weight:700;color:#EF6603;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">① Soletração Livre</div>
+            <p style="font-size:0.76rem;color:#9A9CB8;line-height:1.65;margin:0">Conecte o Arduino, digite a palavra desejada e clique em <strong>Soletrear</strong>. A mão reproduzirá cada letra sequencialmente. Também é possível ativar o microfone e falar a palavra.</p>
         </div>
         """, unsafe_allow_html=True)
     with cu2:
         st.markdown("""
         <div style="background:#2F324D;border:1px solid #525680;border-top:2px solid #EF6603;border-radius:8px;padding:14px;height:100%">
-            <div style="font-size:0.7rem;font-weight:700;color:#EF6603;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">② Modo Voz</div>
-            <p style="font-size:0.76rem;color:#9A9CB8;line-height:1.65;margin:0">Clique em <strong>Ativar microfone</strong>. Fale a palavra em português e o sistema reconhecerá automaticamente e acionará os servos. Ajuste o atraso entre letras pelo slider.</p>
+            <div style="font-size:0.7rem;font-weight:700;color:#EF6603;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">② Modo Aula e Quiz</div>
+            <p style="font-size:0.76rem;color:#9A9CB8;line-height:1.65;margin:0">Na aba <strong>Texto / Voz</strong>, explore o alfabeto letra por letra no <strong>Modo Aula</strong> ou teste seus conhecimentos no <strong>Quiz</strong>. Funcionam sem Arduino conectado.</p>
         </div>
         """, unsafe_allow_html=True)
     with cu3:
         st.markdown("""
         <div style="background:#2F324D;border:1px solid #525680;border-top:2px solid #EF6603;border-radius:8px;padding:14px;height:100%">
-            <div style="font-size:0.7rem;font-weight:700;color:#EF6603;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">③ Modo Câmera</div>
-            <p style="font-size:0.76rem;color:#9A9CB8;line-height:1.65;margin:0">Acesse a aba <strong>Câmera</strong>, clique em <strong>Iniciar câmera</strong> e posicione a mão frente à webcam. A mão robótica espelha seus gestos em tempo real.
-            </p>
+            <div style="font-size:0.7rem;font-weight:700;color:#EF6603;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">③ Siga o Sinal</div>
+            <p style="font-size:0.76rem;color:#9A9CB8;line-height:1.65;margin:0">Na aba <strong>Câmera</strong>, pratique os sinais em sequência <strong>A→Z</strong> ou em modo <strong>Aleatório</strong>. A câmera detecta seu sinal e confirma quando correto. Funciona sem Arduino conectado.</p>
+        </div>
+    """, unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+
+def _render_professor() -> None:
+    st.markdown('<div class="about-section-title">Para o Professor</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="about-card">
+        <p style="color:#9A9CB8;font-size:0.83rem;line-height:1.8;margin-bottom:16px">
+            O RoboLibras foi pensado para ser utilizado em sala de aula como recurso pedagógico
+            de apoio ao ensino de LIBRAS. Abaixo estão algumas sugestões de uso:
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    p1, p2, p3 = st.columns(3, gap="small")
+    with p1:
+        st.markdown("""
+        <div style="background:#2F324D;border:1px solid #525680;border-top:2px solid #3B8BD4;border-radius:8px;padding:14px;height:100%">
+            <div style="font-size:0.7rem;font-weight:700;color:#3B8BD4;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Introdução ao Alfabeto</div>
+            <p style="font-size:0.76rem;color:#9A9CB8;line-height:1.65;margin:0">Use o <strong>Modo Aula</strong> para apresentar cada letra do alfabeto manual à turma. A mão robótica executa o sinal enquanto os alunos observam a posição dos dedos no painel.</p>
         </div>
         """, unsafe_allow_html=True)
-
+    with p2:
+        st.markdown("""
+        <div style="background:#2F324D;border:1px solid #525680;border-top:2px solid #3B8BD4;border-radius:8px;padding:14px;height:100%">
+            <div style="font-size:0.7rem;font-weight:700;color:#3B8BD4;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Avaliação Formativa</div>
+            <p style="font-size:0.76rem;color:#9A9CB8;line-height:1.65;margin:0">Utilize o <strong>Quiz</strong> ao final da aula para verificar o aprendizado. Os alunos identificam a letra correspondente ao sinal exibido — sem precisar de Arduino conectado.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    with p3:
+        st.markdown("""
+        <div style="background:#2F324D;border:1px solid #525680;border-top:2px solid #3B8BD4;border-radius:8px;padding:14px;height:100%">
+            <div style="font-size:0.7rem;font-weight:700;color:#3B8BD4;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Prática Individualizada</div>
+            <p style="font-size:0.76rem;color:#9A9CB8;line-height:1.65;margin:0">Oriente os alunos a utilizarem o <strong>Siga o Sinal</strong> com a webcam para praticar individualmente. O modo A→Z garante progressão e o Aleatório desafia os mais avançados.</p>
+        </div>
+        """, unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
+
 
 def _render_footer() -> None:
     st.markdown(
