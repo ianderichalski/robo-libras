@@ -31,6 +31,11 @@ _DEFAULTS = {
     "quiz_acerto": False,
     "quiz_acertos": 0,
     "quiz_total": 0,
+    "sinal_index": 0,
+    "sinal_feitos": set(),
+    "sinal_random_char": "",
+    "sinal_streak": 0,
+    "sinal_acerto_flag": False,
 }
 
 def init() -> None:

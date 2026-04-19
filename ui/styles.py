@@ -317,5 +317,65 @@ hr { border-color: #525680 !important; }
 .lbr-hdr-badge .dot { width: 5px; height: 5px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
 .lbr-hdr-badge.on .dot  { background: #22C55E; animation: lbr-pulse 1.8s infinite; }
 .lbr-hdr-badge.off .dot { background: #525680; }
+
+/* ── Siga o Sinal ── */
+@keyframes lbr-flash {
+    0%   { opacity: 1; }
+    50%  { opacity: 0; }
+    100% { opacity: 1; }
+}
+.lbr-flash {
+    animation: lbr-flash 0.4s ease-in-out 2;
+}
+.lbr-sinal-target {
+    text-align: center;
+    background: #3D4166;
+    border: 1.5px solid #525680;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 8px;
+}
+.lbr-sinal-target .letra {
+    font-size: 5rem;
+    font-weight: 700;
+    color: #EF6603;
+    line-height: 1;
+    font-family: 'JetBrains Mono', monospace;
+}
+.lbr-sinal-target .instrucao {
+    font-size: 0.8rem;
+    color: #6B6D88;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-top: 8px;
+}
+.lbr-sinal-acerto {
+    text-align: center;
+    background: rgba(34,197,94,0.15);
+    border: 1.5px solid rgba(34,197,94,0.4);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 8px;
+}
+.lbr-sinal-acerto .letra {
+    font-size: 5rem;
+    font-weight: 700;
+    color: #22C55E;
+    line-height: 1;
+    font-family: 'JetBrains Mono', monospace;
+}
+.lbr-sinal-acerto .instrucao {
+    font-size: 0.8rem;
+    color: #22C55E;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-top: 8px;
+}
+.lbr-grid-done {
+    background: rgba(34,197,94,0.15) !important;
+    border-color: #22C55E !important;
+    color: #22C55E !important;
+}
+
 </style>
 """
