@@ -113,6 +113,13 @@ def _landmarks_to_finger_states(landmarks, h: int, w: int) -> dict[str, float]:
         "minimo":    _flex_level(dist_minimo,    finger_thresh),
     }
 
+def _landmarks_to_vector(landmarks) -> list[float]:
+    ox, oy = landmarks[0].x, landmarks[0].y
+    vector = []
+    for lm in landmarks:
+        vector.extend([lm.x - ox, lm.y - oy])
+    return vector
+
 def _send_to_servos(states):
     for name, state in states.items():
         pin = FINGER_PINS.get(name)
@@ -152,7 +159,7 @@ def process_frame(
             hand_detected = True
             _draw_landmarks(frame_bgr, landmarks, h, w)
             finger_states = _landmarks_to_finger_states(landmarks, h, w)
-            letter, confidence = recognize(finger_states)
+            letter, confidence = recognize(finger_states, _landmarks_to_vector(landmarks))
             if send_servos:
                 _send_to_servos(finger_states)
 
