@@ -7,3 +7,4 @@ SpeechRecognition==3.10.4
 # pyaudio — veja instruções no README.md
 streamlit>=1.36.0
 protobuf>=4.25.3,<5
+scikit-learn
