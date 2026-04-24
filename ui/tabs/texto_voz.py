@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 
 from src.poses import get_pose, normalize_text, FINGER_ORDER
 from src import servo
@@ -196,7 +197,7 @@ def _render_right(col) -> None:
 def _render_aula() -> None:
     from src.poses import POSES
 
-    chars = [str(i) for i in range(6)] + [chr(i) for i in range(65, 91)]
+    chars = [chr(i) for i in range(65, 91)]
     chars = [c for c in chars if c in POSES]
 
     if "aula_index" not in st.session_state:
@@ -212,7 +213,19 @@ def _render_aula() -> None:
 
     with col_left:
         st.markdown('<div class="lbr-section">Sinal Atual</div>', unsafe_allow_html=True)
+        
+        img_path = os.path.join("docs", "alphabet", f"{char}.jpg")
+        if os.path.exists(img_path):
+            col1, col2, col3 = st.columns([1, 2, 1])
+            with col2:
+                st.image(img_path, width=200)
+                st.markdown(
+                    "<p style='font-size:0.65rem;color:#6B6D88;text-align:center;margin:2px 0 8px'><a href='https://dicionario.ines.gov.br' target='_blank' style='color:#6B6D88'>Ver movimento no Dicionário INES/MEC</a></p>",
+                    unsafe_allow_html=True,
+                )
+
         render_char(char)
+
         render_dedos(POSES[char])
         render_legend()
 
@@ -254,12 +267,12 @@ def _render_aula() -> None:
         """, unsafe_allow_html=True)
 
         st.markdown('<div class="lbr-section">Navegar no Alfabeto</div>', unsafe_allow_html=True)
-        for row in [chars[i:i+8] for i in range(0, len(chars), 8)]:
-            bcols = st.columns(len(row))
+        for row in [chars[i:i+9] for i in range(0, len(chars), 9)]:
+            bcols = st.columns(9)
             for bcol, c in zip(bcols, row):
                 with bcol:
                     if st.button(c, key=f"aula_chr_{c}",
-                                 type="primary" if c == char else "secondary"):
+                                type="primary" if c == char else "secondary"):
                         st.session_state.aula_index = chars.index(c)
                         st.rerun()
     st.markdown('<div class="lbr-section">Como Funciona</div>', unsafe_allow_html=True)
@@ -286,7 +299,8 @@ def _render_quiz() -> None:
     import random
     from src.poses import POSES
 
-    chars = [c for c in POSES if c != " "]
+    chars = [chr(i) for i in range(65, 91)]
+    chars = [c for c in chars if c in POSES]
 
     if not st.session_state.quiz_char:
         st.session_state.quiz_char = random.choice(chars)
@@ -306,6 +320,15 @@ def _render_quiz() -> None:
 
     with col_left:
         st.markdown('<div class="lbr-section">Sinal na Mão Robótica</div>', unsafe_allow_html=True)
+        img_path = os.path.join("docs", "alphabet", f"{char}.jpg")
+        if os.path.exists(img_path):
+            col1, col2, col3 = st.columns([1, 2, 1])
+            with col2:
+                st.image(img_path, width=200)
+                st.markdown(
+                    "<p style='font-size:0.65rem;color:#6B6D88;text-align:center;margin:2px 0 8px'><a href='https://dicionario.ines.gov.br' target='_blank' style='color:#6B6D88'>Ver movimento no Dicionário INES/MEC</a></p>",
+                    unsafe_allow_html=True,
+                )
         if not st.session_state.quiz_respondido:
             render_char("?")
         else:
