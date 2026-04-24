@@ -155,7 +155,15 @@ SERIAL_PORT = "COM4"               # Windows
 streamlit run app.py
 ```
 
-Abre automaticamente no navegador. Disponibiliza todos os modos de aprendizagem — Modo Aula, Quiz, Siga o Sinal e Soletração Livre. Os modos Aula, Quiz e Siga o Sinal funcionam sem Arduino conectado.
+Abre automaticamente no navegador. Disponibiliza todos os modos de aprendizagem:
+
+| Modo | Descrição | Requer Arduino |
+|---|---|---|
+| **Soletração Livre** | Digite ou fale uma palavra e a mão robótica soletra letra por letra | Sim |
+| **Modo Aula** | Explore o alfabeto A–Z com imagem, painel de dedos e execução na mão robótica | Opcional |
+| **Quiz** | Identifique a letra correspondente ao sinal exibido | Opcional |
+| **Espelhamento** | Espelhe seus gestos na mão robótica em tempo real via câmera | Sim |
+| **Siga o Sinal** | Pratique os sinais A–Z ou em modo aleatório com reconhecimento via câmera | Não |
 
 ### Interface de Linha de Comando
 
@@ -209,10 +217,12 @@ Ao concluir todos os dedos, o script imprime o bloco `SERVO_ANGLES` completo par
 │   └── config.toml           # Configuração visual da interface web
 │
 ├── docs/
-│   └── .gitkeep              # Diretório para demo.gif e demais mídias
+│   ├── alphabet/             # Imagens do alfabeto manual da LIBRAS (A–Z)
+│   └── .gitkeep
 │
 ├── models/
-│   └── hand_landmarker.task  # Modelo MediaPipe (download automático, não versionado)
+│   ├── hand_landmarker.task  # Modelo MediaPipe (download automático, não versionado)
+│   └── rf_libras.pkl         # Modelo Random Forest para reconhecimento de gestos
 │
 ├── src/                      # Módulos do sistema (lógica de negócio)
 │   ├── config.py             # Parâmetros centralizados (pinos, ângulos, timing)
@@ -232,8 +242,10 @@ Ao concluir todos os dedos, o script imprime o bloco `SERVO_ANGLES` completo par
 │       ├── camera.py         # Aba Câmera
 │       └── sobre.py          # Aba Sobre
 │
-└── tools/
-    └── calibrate.py          # Ferramenta interativa de calibração dos servos
+├── tools/
+    ├── calibrate.py          # Ferramenta interativa de calibração dos servos
+    ├── extract_landmarks.py  # Extrai landmarks das imagens para treino
+    └── train_model.py        # Treinamento do modelo Random Forest
 ```
 
 ## Dependências
@@ -248,6 +260,7 @@ Ao concluir todos os dedos, o script imprime o bloco `SERVO_ANGLES` completo par
 | NumPy | ≥ 1.26, < 2 | Processamento matricial de imagem |
 | Pillow | ≥ 10.0 | Suporte a formatos de imagem no Streamlit |
 | protobuf | ≥ 4.25, < 5 | Serialização interna do MediaPipe |
+| scikit-learn | ≥ 1.0 | Modelo Random Forest para reconhecimento de gestos |
 
 ## Limitações Conhecidas
 
@@ -290,11 +303,14 @@ https://arxiv.org/abs/2509.03690
 Scientific African, 19, e01533.  
 https://doi.org/10.1016/j.sciaf.2022.e01533  
 
-[6] IBGE — Instituto Brasileiro de Geografia e Estatística. (2023).  
-*Censo Demográfico 2022: Pessoas com Deficiência.*  
-https://www.ibge.gov.br  
+[6] IBGE — Instituto Brasileiro de Geografia e Estatística. (2025).  
+*Censo Demográfico 2022: Pessoas com Deficiência e Pessoas Diagnosticadas com Transtorno do Espectro Autista — Resultados Preliminares da Amostra.*  
+https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/43463-censo-2022-brasil-tem-14-4-milhoes-de-pessoas-com-deficiencia
 
+[7] FENEIS — Federação Nacional de Educação e Integração dos Surdos. (2024).  
+*Educação Inclusiva para Alunos Surdos: Um Novo Olhar para a Inclusão.*  
+https://feneis.org.br/educacao-inclusiva-para-alunos-surdos-um-novo-olhar-para-a-inclusao/
 
-[7] FENEIS — Federação Nacional de Educação e Integração dos Surdos. (2020–2024).  
-*Materiais institucionais sobre LIBRAS e acessibilidade.*  
-https://www.feneis.org.br  
+[8] INES — Instituto Nacional de Educação de Surdos. (2024).  
+*Dicionário da Língua Brasileira de Sinais V3.*  
+https://dicionario.ines.gov.br
