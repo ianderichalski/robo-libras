@@ -2,6 +2,7 @@ import queue
 import threading
 import cv2
 import streamlit as st
+import os
 
 from ui.components import render_dedos, render_legend
 from ui.actions import camera_thread
@@ -192,7 +193,7 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
     from src.poses import POSES
     from ui.components import render_dedos, render_legend
 
-    chars = [str(i) for i in range(6)] + [chr(i) for i in range(65, 91)]
+    chars = [chr(i) for i in range(65, 91)]
     chars = [c for c in chars if c in POSES]
 
     # estado A→Z
@@ -368,6 +369,15 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
                 unsafe_allow_html=True,
             )
         with st.expander("💡 Ver dica — posição dos dedos"):
+            img_path = os.path.join("docs", "alphabet", f"{target}.jpg")
+            if os.path.exists(img_path):
+                col1, col2, col3 = st.columns([1, 2, 1])
+                with col2:
+                    st.image(img_path, width=200)
+                    st.markdown(
+                       "<p style='font-size:0.65rem;color:#6B6D88;text-align:center;margin:2px 0 8px'><a href='https://dicionario.ines.gov.br' target='_blank' style='color:#6B6D88'>Ver movimento no Dicionário INES/MEC</a></p>",
+                        unsafe_allow_html=True,
+                    )
             render_dedos(POSES.get(target))
             render_legend()
 
@@ -385,9 +395,9 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
             </div>
             """, unsafe_allow_html=True)
 
-            rows = [chars[i:i+8] for i in range(0, len(chars), 8)]
+            rows = [chars[i:i+9] for i in range(0, len(chars), 9)]
             for row in rows:
-                gcols = st.columns(len(row))
+                gcols = st.columns(9)
                 for gcol, c in zip(gcols, row):
                     with gcol:
                         cls = "lbr-grid-cell"
