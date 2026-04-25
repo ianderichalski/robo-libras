@@ -9,18 +9,18 @@ from ui.actions import camera_thread
 
 def render(tab) -> None:
     with tab:
-        mode = st.radio(
+        mode = st.segmented_control(
             "Modo",
             ["Espelhamento", "Siga o Sinal"],
-            horizontal=True,
+            default="Espelhamento",
             label_visibility="collapsed",
         )
 
         if mode == "Siga o Sinal":
-            submodo = st.radio(
+            submodo = st.segmented_control(
                 "Submodo",
                 ["A → Z", "Aleatório"],
-                horizontal=True,
+                default="A → Z",
                 label_visibility="collapsed",
                 key="sinal_submodo",
                 disabled=st.session_state.cam_active,
@@ -425,3 +425,11 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
                     st.session_state.sinal_index += 1
                     st.session_state.sinal_acerto_flag = False
                     st.rerun()
+                    
+        if submodo == "Aleatório":
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button("Pular →", width="stretch", key="sinal_skip_random"):
+                import random
+                st.session_state.sinal_random_char = random.choice(chars)
+                st.session_state.sinal_acerto_flag = False
+                st.rerun()
