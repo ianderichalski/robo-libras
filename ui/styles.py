@@ -377,5 +377,38 @@ hr { border-color: #525680 !important; }
     color: #22C55E !important;
 }
 
+/* ── Tabs ── */
+[data-testid="stTabs"] [data-baseweb="tab-list"] {
+    gap: 0px;
+    border-bottom: 1px solid #525680 !important;
+    background: transparent;
+    padding: 0;
+    justify-content: center;
+    width: 100%;
+}
+[data-testid="stTabs"] [data-baseweb="tab"] {
+    font-size: 0.82rem !important;
+    font-weight: 500 !important;
+    padding: 10px 28px !important;
+    color: #6B6D88 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    border-bottom: 2px solid transparent !important;
+    background: transparent !important;
+    transition: all 0.15s ease !important;
+    letter-spacing: 0.5px !important;
+}
+[data-testid="stTabs"] [data-baseweb="tab"]:hover {
+    color: #C8CAE0 !important;
+    border-bottom: 2px solid #525680 !important;
+}
+[data-testid="stTabs"] [aria-selected="true"] {
+    color: #EF6603 !important;
+    border-bottom: 2px solid #EF6603 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+[data-testid="stTabs"] [data-baseweb="tab-panel"] { padding-top: 1.2rem !important; }
+
 </style>
 """

@@ -7,7 +7,6 @@ def render(tab) -> None:
         _render_metrics()
         _render_motivation()
         _render_technology()
-        _render_how_to_use()
         _render_professor()
         _render_footer()
 
@@ -102,40 +101,6 @@ def _render_technology() -> None:
             Tudo é executado localmente no computador — sem servidores externos, sem custos de nuvem.
         </p>
     </div>
-    """, unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
-
-def _render_how_to_use() -> None:
-    st.markdown('<div class="about-section-title">Como Usar o Sistema</div>', unsafe_allow_html=True)
-    st.markdown("""
-    <div class="about-card">
-        <p><strong style="color:#E8E9F0">Pré-requisitos:</strong>
-        Arduino Uno com firmware StandardFirmata, Python 3.10, dependências do <code style="color:#EF6603;background:rgba(239,102,3,0.1);padding:1px 6px;border-radius:4px">requirements.txt</code>
-        e microfone (opcional para modo de voz).</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    cu1, cu2, cu3 = st.columns(3, gap="small")
-    with cu1:
-        st.markdown("""
-        <div style="background:#2F324D;border:1px solid #525680;border-top:2px solid #EF6603;border-radius:8px;padding:14px;height:100%">
-            <div style="font-size:0.7rem;font-weight:700;color:#EF6603;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">① Soletração Livre</div>
-            <p style="font-size:0.76rem;color:#9A9CB8;line-height:1.65;margin:0">Conecte o Arduino, digite a palavra desejada e clique em <strong>Soletrear</strong>. A mão reproduzirá cada letra sequencialmente. Também é possível ativar o microfone e falar a palavra.</p>
-        </div>
-        """, unsafe_allow_html=True)
-    with cu2:
-        st.markdown("""
-        <div style="background:#2F324D;border:1px solid #525680;border-top:2px solid #EF6603;border-radius:8px;padding:14px;height:100%">
-            <div style="font-size:0.7rem;font-weight:700;color:#EF6603;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">② Modo Aula e Quiz</div>
-            <p style="font-size:0.76rem;color:#9A9CB8;line-height:1.65;margin:0">Na aba <strong>Texto / Voz</strong>, explore o alfabeto letra por letra no <strong>Modo Aula</strong> ou teste seus conhecimentos no <strong>Quiz</strong>. Funcionam sem Arduino conectado.</p>
-        </div>
-        """, unsafe_allow_html=True)
-    with cu3:
-        st.markdown("""
-        <div style="background:#2F324D;border:1px solid #525680;border-top:2px solid #EF6603;border-radius:8px;padding:14px;height:100%">
-            <div style="font-size:0.7rem;font-weight:700;color:#EF6603;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">③ Siga o Sinal</div>
-            <p style="font-size:0.76rem;color:#9A9CB8;line-height:1.65;margin:0">Na aba <strong>Câmera</strong>, pratique os sinais em sequência <strong>A→Z</strong> ou em modo <strong>Aleatório</strong>. A câmera detecta seu sinal e confirma quando correto. Funciona sem Arduino conectado.</p>
-        </div>
     """, unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 

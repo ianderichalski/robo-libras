@@ -3,7 +3,7 @@ import streamlit as st
 
 from ui import styles, state
 from ui.actions import connect, disconnect, process_voice
-from ui.tabs import texto_voz, camera, sobre
+from ui.tabs import inicio, texto_voz, camera, sobre
 
 # inicialização
 st.set_page_config(page_title="RoboLibras", page_icon="docs/logo.png", layout="wide")
@@ -20,56 +20,12 @@ status_html = (
     f'<span class="lbr-hdr-badge off" title="{tooltip_off}"><span class="dot"></span>Desconectado</span>'
 )
 
-hcol_main, hcol_conn = st.columns([5, 2], gap="large")
-
-with hcol_main:
-    st.markdown('''
-    <div class="lbr-hero">
-        <div class="lbr-hero-title">RoboLibras</div>
-        <div class="lbr-hero-sub">
-            Objeto de aprendizagem para o ensino do alfabeto manual da
-            <strong>Língua Brasileira de Sinais</strong> —
-            explore, pratique e aprenda por texto, voz ou câmera.
-        </div>
-    </div>
-    ''', unsafe_allow_html=True)
-
-with hcol_conn:
-    if not st.session_state.arduino_ok:
-        c_badge, c_pop = st.columns([4, 1])
-        with c_badge:
-            st.markdown(status_html, unsafe_allow_html=True)
-        with c_pop:
-            with st.popover("🛈"):
-                st.markdown("**Como conectar o Arduino**")
-                st.markdown(
-                    "**1.** Conecte o cabo USB ao Arduino e ao PC.\n\n"
-                    "**2.** Carregue o firmware **StandardFirmata** pela IDE Arduino "
-                    "*(Arquivo → Exemplos → Firmata → StandardFirmata)*.\n\n"
-                    "**3.** Descubra a porta no **Gerenciador de Dispositivos** "
-                    "*(Windows: COMx · Linux/Mac: /dev/ttyUSB0)*.\n\n"
-                    "**4.** Digite a porta abaixo e clique em **Conectar**."
-                )
-        port = st.text_input("Porta serial", value="COM4", label_visibility="collapsed",
-                             placeholder="ex: COM4 ou /dev/ttyUSB0", key="port_input")
-        if st.button("Conectar", key="btn_connect", width='stretch'):
-            ok, msg = connect(port)
-            if ok:
-                st.rerun()
-            else:
-                st.error(msg)
-    else:
-        st.markdown(status_html, unsafe_allow_html=True)
-        if st.button("Desconectar", key="btn_disconnect", width='stretch'):
-            disconnect()
-            st.rerun()
-
 # processar fila de voz (roda sempre, independente da aba ativa)
 process_voice(st.session_state.voice_delay)
 
 # abas
-tab_texto, tab_camera, tab_about = st.tabs(["Texto / Voz", "Câmera", "Sobre"])
-
+tab_inicio, tab_texto, tab_camera, tab_about = st.tabs(["Início", "Aprender", "Praticar", "Sobre"])
+inicio.render(tab_inicio)
 texto_voz.render(tab_texto)
 camera.render(tab_camera)
 sobre.render(tab_about)

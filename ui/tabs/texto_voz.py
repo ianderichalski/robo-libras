@@ -9,10 +9,10 @@ from ui.actions import start_spell
 
 def render(tab) -> None:
     with tab:
-        mode = st.radio(
+        mode = st.segmented_control(
             "Modo",
             ["Soletração Livre", "Modo Aula", "Quiz"],
-            horizontal=True,
+            default="Soletração Livre",
             label_visibility="collapsed",
         )
 
