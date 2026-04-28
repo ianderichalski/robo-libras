@@ -193,8 +193,9 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
     from src.poses import POSES
     from ui.components import render_dedos, render_legend
 
+    _KNN_ONLY = {"H", "J", "K", "X", "Z"}
     chars = [chr(i) for i in range(65, 91)]
-    chars = [c for c in chars if c in POSES]
+    chars = [c for c in chars if c in POSES and c not in _KNN_ONLY]
 
     # estado A→Z
     if "sinal_index" not in st.session_state:
@@ -395,17 +396,25 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
             </div>
             """, unsafe_allow_html=True)
 
-            rows = [chars[i:i+9] for i in range(0, len(chars), 9)]
+            _KNN_ONLY = {"H", "J", "K", "X", "Z"}
+            all_letters = [chr(i) for i in range(65, 91) if chr(i) in POSES]
+            rows = [all_letters[i:i+9] for i in range(0, len(all_letters), 9)]
             for row in rows:
                 gcols = st.columns(9)
                 for gcol, c in zip(gcols, row):
                     with gcol:
-                        cls = "lbr-grid-cell"
-                        if c in feitos:
-                            cls += " lbr-grid-done"
-                        elif c == target:
-                            cls += " active"
-                        st.markdown(f'<div class="{cls}">{c}</div>', unsafe_allow_html=True)
+                        if c in _KNN_ONLY:
+                            st.markdown(f"""
+                            <div class="lbr-grid-cell" style="opacity:0.3;cursor:not-allowed" title="Sinal com movimento — em breve">
+                                {c}
+                            </div>""", unsafe_allow_html=True)
+                        else:
+                            cls = "lbr-grid-cell"
+                            if c in feitos:
+                                cls += " lbr-grid-done"
+                            elif c == target:
+                                cls += " active"
+                            st.markdown(f'<div class="{cls}">{c}</div>', unsafe_allow_html=True)
 
         # navegação A→Z
         if submodo == "A → Z":
