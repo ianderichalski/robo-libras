@@ -72,7 +72,7 @@ def _render_motivation() -> None:
         </p>
         <p style="color:#9A9CB8;font-size:0.83rem;line-height:1.8;margin-bottom:16px">
             Esse cenário é ainda mais relevante considerando que cerca de 
-            <strong style="color:#EF6603">2,3 milhões de brasileiros possuem deficiência auditiva severa</strong> 
+            <strong style="color:#EF6603">10,3 milhões de brasileiros possuem algum grau de deficiência auditiva</strong> 
             (IBGE, 2022), reforçando a necessidade de práticas pedagógicas inclusivas que aproximem 
             estudantes ouvintes e surdos. A formação de professores e o acesso a ferramentas 
             acessíveis são pilares fundamentais para que a inclusão aconteça de fato nas escolas.
@@ -98,7 +98,8 @@ def _render_technology() -> None:
             <strong style="color:#E8E9F0">MediaPipe</strong>, tecnologia do Google capaz de identificar
             a posição da mão em tempo real. O reconhecimento de voz usa o
             <strong style="color:#E8E9F0">Google Speech</strong> em português.
-            Tudo é executado localmente no computador — sem servidores externos, sem custos de nuvem.
+            Tudo pode ser executado localmente no computador ou acessado
+            diretamente pelo navegador via servidor web.
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -143,6 +144,6 @@ def _render_professor() -> None:
 def _render_footer() -> None:
     st.markdown(
         '<p style="text-align:center;font-size:0.75rem;color:#6B6D88">'
-        '© 2026, Iandê de Freitas Richalski · Projeto InteliGente - UTFPR</p>',
+        '© 2026, Projeto InteliGente - UTFPR</p>',
         unsafe_allow_html=True,
     )
