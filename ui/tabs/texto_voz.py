@@ -11,8 +11,8 @@ def render(tab) -> None:
     with tab:
         mode = st.segmented_control(
             "Modo",
-            ["Soletração Livre", "Modo Aula", "Quiz"],
-            default="Soletração Livre",
+            ["Modo Aula", "Quiz", "Soletração Livre"],
+            default="Modo Aula",
             label_visibility="collapsed",
         )
 

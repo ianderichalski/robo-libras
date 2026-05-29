@@ -11,8 +11,8 @@ def render(tab) -> None:
     with tab:
         mode = st.segmented_control(
             "Modo",
-            ["Espelhamento", "Siga o Sinal"],
-            default="Espelhamento",
+            ["Siga o Sinal", "Espelhamento"],
+            default="Siga o Sinal",
             label_visibility="collapsed",
         )
 
