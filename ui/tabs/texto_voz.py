@@ -11,12 +11,12 @@ def render(tab) -> None:
     with tab:
         mode = st.segmented_control(
             "Modo",
-            ["Modo Aula", "Quiz", "Soletração Livre"],
+            ["Modo Aula", "Quiz", "Soletração"],
             default="Modo Aula",
             label_visibility="collapsed",
         )
 
-        if mode == "Soletração Livre":
+        if mode == "Soletração":
             col_left, col_right = st.columns([2, 3], gap="large")
             _render_left(col_left, mode)
             _render_right(col_right)
@@ -25,7 +25,7 @@ def render(tab) -> None:
         elif mode == "Quiz":
             _render_quiz()
 
-def _render_left(col, mode="Soletração Livre") -> None:
+def _render_left(col, mode="Soletração") -> None:
     with col:
 
         st.markdown('<div class="lbr-section">Praticar Soletração</div>', unsafe_allow_html=True)
@@ -226,9 +226,6 @@ def _render_aula() -> None:
 
         render_char(char)
 
-        render_dedos(POSES[char])
-        render_legend()
-
         st.markdown("<br>", unsafe_allow_html=True)
         c1, c2, c3 = st.columns(3)
         with c1:
@@ -247,7 +244,7 @@ def _render_aula() -> None:
                 st.rerun()
 
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("▶  Executar na mão robótica", width="stretch",
+        if st.button("▶  Executar sinal na mão robótica", width="stretch",
                      disabled=not st.session_state.arduino_ok, key="aula_exec"):
             start_spell(char, st.session_state.voice_delay)
             st.rerun()
@@ -287,7 +284,7 @@ def _render_aula() -> None:
     </div>
     <div class="lbr-step">
         <div class="lbr-step-num">3</div>
-        <div class="lbr-step-text">Clique em <strong>Executar na mão robótica</strong> para ver o sinal reproduzido fisicamente.</div>
+        <div class="lbr-step-text">Clique em <strong>Executar sinal na mão robótica</strong> para ver o sinal reproduzido fisicamente.</div>
     </div>
     <div class="lbr-step">
         <div class="lbr-step-num">4</div>
@@ -302,11 +299,14 @@ def _render_quiz() -> None:
     chars = [chr(i) for i in range(65, 91)]
     chars = [c for c in chars if c in POSES]
 
-    if not st.session_state.quiz_char:
+    # Inicialização do estado
+    if not hasattr(st.session_state, 'quiz_char') or not st.session_state.quiz_char:
         st.session_state.quiz_char = random.choice(chars)
         st.session_state.quiz_opcoes = []
         st.session_state.quiz_respondido = False
         st.session_state.quiz_acerto = False
+        if 'quiz_acertos' not in st.session_state: st.session_state.quiz_acertos = 0
+        if 'quiz_erros' not in st.session_state: st.session_state.quiz_erros = 0
 
     char = st.session_state.quiz_char
 
@@ -319,7 +319,7 @@ def _render_quiz() -> None:
     col_left, col_right = st.columns([2, 3], gap="large")
 
     with col_left:
-        st.markdown('<div class="lbr-section">Sinal na Mão Robótica</div>', unsafe_allow_html=True)
+        st.markdown('<div class="lbr-section">Sinal Atual</div>', unsafe_allow_html=True)
         img_path = os.path.join("docs", "alphabet", f"{char}.jpg")
         if os.path.exists(img_path):
             col1, col2, col3 = st.columns([1, 2, 1])
@@ -329,15 +329,23 @@ def _render_quiz() -> None:
                     "<p style='font-size:0.65rem;color:#6B6D88;text-align:center;margin:2px 0 8px'><a href='https://dicionario.ines.gov.br' target='_blank' style='color:#6B6D88'>Ver movimento no Dicionário INES/MEC</a></p>",
                     unsafe_allow_html=True,
                 )
+        
         if not st.session_state.quiz_respondido:
             render_char("?")
         else:
-            render_char(char)
-        render_dedos(POSES[char])
-        render_legend()
+            bg_color = "rgba(40, 167, 69, 0.15)" if st.session_state.quiz_acerto else "rgba(220, 53, 69, 0.15)"
+            border_color = "#28a745" if st.session_state.quiz_acerto else "#dc3545"
+            feedback_text = "✅ CORRETO!" if st.session_state.quiz_acerto else "❌ INCORRETO!"
+            
+            st.markdown(f"""
+                <div style="background: {bg_color}; border: 2px solid {border_color}; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 3.2rem; font-weight: 800; color: {border_color}; line-height: 1.1;">{char}</div>
+                    <div style="font-size: 0.75rem; font-weight: 700; color: {border_color}; text-transform: uppercase; letter-spacing: 2px; margin-top: 5px;">{feedback_text}</div>
+                </div>
+            """, unsafe_allow_html=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("▶  Executar sinal", width="stretch",
+        if st.button("▶  Executar sinal na mão robótica", use_container_width=True,
                      disabled=not st.session_state.arduino_ok, key="quiz_exec"):
             start_spell(char, st.session_state.voice_delay)
             st.rerun()
@@ -354,11 +362,11 @@ def _render_quiz() -> None:
         </div>
         <div class="lbr-step">
             <div class="lbr-step-num">3</div>
-            <div class="lbr-step-text">Receba <strong>feedback imediato</strong> — acerto ou erro com a resposta correta.</div>
+            <div class="lbr-step-text">Receba <strong>feedback imediato</strong> — acerto ou erro.</div>
         </div>
         <div class="lbr-step">
             <div class="lbr-step-num">4</div>
-            <div class="lbr-step-text">Acompanhe sua <strong>pontuação</strong> ao longo da sessão.</div>
+            <div class="lbr-step-text">Acompanhe seu progresso total.</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -369,41 +377,46 @@ def _render_quiz() -> None:
             bcols = st.columns(2)
             for i, opcao in enumerate(st.session_state.quiz_opcoes):
                 with bcols[i % 2]:
-                    if st.button(opcao, width="stretch", key=f"quiz_op_{opcao}"):
+                    if st.button(opcao, use_container_width=True, key=f"quiz_op_{opcao}"):
                         st.session_state.quiz_respondido = True
-                        st.session_state.quiz_acerto = opcao == char
-                        st.session_state.quiz_total += 1
+                        st.session_state.quiz_acerto = (opcao == char)
                         if opcao == char:
                             st.session_state.quiz_acertos += 1
+                        else:
+                            st.session_state.quiz_erros += 1
                         st.rerun()
         else:
-            if st.session_state.quiz_acerto:
-                st.markdown(
-                    '<div class="lbr-recognized">✅  Correto!</div>',
-                    unsafe_allow_html=True,
-                )
-            else:
-                st.markdown(
-                    f'<div class="lbr-recognized">❌  Errado! O sinal era <strong>{char}</strong>.</div>',
-                    unsafe_allow_html=True,
-                )
-
-            if st.button("Próxima →", width="stretch", key="quiz_next"):
+            if st.button("Próxima pergunta →", use_container_width=True, key="quiz_next"):
                 st.session_state.quiz_char = random.choice(chars)
                 st.session_state.quiz_opcoes = []
                 st.session_state.quiz_respondido = False
                 st.session_state.quiz_acerto = False
                 st.rerun()
 
-        st.markdown('<div class="lbr-section">Pontuação</div>', unsafe_allow_html=True)
+        st.markdown('<div class="lbr-section">Progresso</div>', unsafe_allow_html=True)
         acertos = st.session_state.quiz_acertos
-        total = st.session_state.quiz_total
+        erros = st.session_state.quiz_erros
+        total = acertos + erros
         pct = int(acertos / total * 100) if total > 0 else 0
+        
         st.markdown(f"""
         <div class="lbr-card">
-            <h4>{acertos} de {total} corretos ({pct}%)</h4>
-            <div style="background:#525680;border-radius:4px;height:8px;margin-top:8px">
-                <div style="background:#EF6603;width:{pct}%;height:8px;border-radius:4px"></div>
+            <div style="display: flex; justify-content: space-around; margin-bottom: 10px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 0.65rem; color: #9A9CB8; text-transform: uppercase;">Acertos</div>
+                    <div style="font-size: 1.2rem; color: #28a745; font-weight: bold;">{acertos}</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 0.65rem; color: #9A9CB8; text-transform: uppercase;">Erros</div>
+                    <div style="font-size: 1.2rem; color: #dc3545; font-weight: bold;">{erros}</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 0.65rem; color: #9A9CB8; text-transform: uppercase;">Precisão</div>
+                    <div style="font-size: 1.2rem; color: #EF6603; font-weight: bold;">{pct}%</div>
+                </div>
+            </div>
+            <div style="background:#525680;border-radius:4px;height:6px;">
+                <div style="background:#EF6603;width:{pct}%;height:6px;border-radius:4px"></div>
             </div>
         </div>
         """, unsafe_allow_html=True)
