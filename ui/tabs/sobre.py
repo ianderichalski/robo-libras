@@ -43,8 +43,8 @@ def _render_hero() -> None:
 def _render_metrics() -> None:
     m1, m2, m3, m4 = st.columns(4)
     for col, val, lbl in [
-        (m1, "32", "Sinais ensináveis"),
-        (m2, "3",  "Modos de aprendizagem"),
+        (m1, "26", "Sinais ensináveis"),
+        (m2, "5",  "Modos de aprendizagem"),
         (m3, "3",  "Modalidades de entrada"),
         (m4, "A–Z", "Alfabeto manual completo"),
     ]:
@@ -144,6 +144,6 @@ def _render_professor() -> None:
 def _render_footer() -> None:
     st.markdown(
         '<p style="text-align:center;font-size:0.75rem;color:#6B6D88">'
-        '© 2026, Projeto InteliGente - UTFPR</p>',
+        '© 2026, RoboLibras</p>',
         unsafe_allow_html=True,
     )
