@@ -3,11 +3,27 @@ import threading
 import cv2
 import streamlit as st
 import os
+import time
+import random
 
 from ui.components import render_dedos, render_legend
 from ui.actions import camera_thread
 
 def render(tab) -> None:
+    # Injeta a animação do Streak
+    st.markdown("""
+        <style>
+        @keyframes lbr-glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(239, 102, 3, 0.2); }
+            50% { box-shadow: 0 0 18px rgba(239, 102, 3, 0.55); }
+        }
+        .streak-glow {
+            animation: lbr-glow 1.5s infinite ease-in-out !important;
+            border-color: #EF6603 !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
     with tab:
         mode = st.segmented_control(
             "Modo",
@@ -40,7 +56,7 @@ def render(tab) -> None:
 
 def _render_video(col) -> None:
     with col:
-        st.markdown('<div class="lbr-section">Câmera — Visão Computacional</div>', unsafe_allow_html=True)
+        st.markdown('<div class="lbr-section">Câmera - Espelhamento</div>', unsafe_allow_html=True)
         st.markdown("""<p style='font-size:0.8rem;color:#9A9CB8;margin:0 0 10px'>
             Sua mão é detectada via <strong>MediaPipe Hand Landmarker</strong>. Os estados
             dos dedos são mapeados em tempo real e replicados nos servomotores.
@@ -65,7 +81,6 @@ def _render_video(col) -> None:
                 st.session_state.cam_queue = queue.Queue(maxsize=2)
                 st.session_state.cam_stop = threading.Event()
                 st.rerun()
-        st.session_state.cam_send_servos = cam_send
 
         if not st.session_state.cam_active:
             if st.button("▶  Iniciar câmera", width='stretch', key="btn_cam_start"):
@@ -154,8 +169,7 @@ def _render_video(col) -> None:
 
 def _render_info(col) -> None:
     with col:
-
-        st.markdown('<div class="lbr-section">Estado da Mão (Câmera)</div>', unsafe_allow_html=True)
+        st.markdown('<div class="lbr-section">Estado da Mão</div>', unsafe_allow_html=True)
         cam_states = st.session_state.cam_finger_states
         render_dedos(cam_states if cam_states else None)
         render_legend()
@@ -189,7 +203,6 @@ def _render_info(col) -> None:
         </p>""", unsafe_allow_html=True)
 
 def _render_siga_sinal(col_cam, col_info, submodo) -> None:
-    import random
     from src.poses import POSES
     from ui.components import render_dedos, render_legend
 
@@ -197,19 +210,23 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
     chars = [chr(i) for i in range(65, 91)]
     chars = [c for c in chars if c in POSES and c not in _KNN_ONLY]
 
-    # estado A→Z
+    # Estado A→Z
     if "sinal_index" not in st.session_state:
         st.session_state.sinal_index = 0
     if "sinal_feitos" not in st.session_state:
         st.session_state.sinal_feitos = set()
 
-    # estado Aleatório
+    # Estado Aleatório
     if "sinal_random_char" not in st.session_state or not st.session_state.sinal_random_char:
         st.session_state.sinal_random_char = random.choice(chars)
     if "sinal_streak" not in st.session_state:
         st.session_state.sinal_streak = 0
+    
+    # Controle de feedback
     if "sinal_acerto_flag" not in st.session_state:
         st.session_state.sinal_acerto_flag = False
+    if "sinal_sucesso_total" not in st.session_state:
+        st.session_state.sinal_sucesso_total = False
 
     if submodo == "A → Z":
         idx = st.session_state.sinal_index
@@ -218,8 +235,7 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
         target = st.session_state.sinal_random_char
 
     with col_cam:
-        with col_cam:
-            st.markdown('<div class="lbr-section">Câmera — Siga o Sinal</div>', unsafe_allow_html=True)
+        st.markdown('<div class="lbr-section">Câmera — Siga o Sinal</div>', unsafe_allow_html=True)
 
         if not st.session_state.cam_active:
             if st.button("▶  Iniciar câmera", width="stretch", key="sinal_cam_start"):
@@ -280,23 +296,7 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
 
             if acertou and not st.session_state.sinal_acerto_flag:
                 st.session_state.sinal_acerto_flag = True
-                if submodo == "Aleatório":
-                    st.session_state.sinal_streak += 1
-                if st.session_state.arduino_ok:
-                    from src import servo
-                    from src.poses import POSES
-                    servo.apply_pose(POSES[target])
-                if submodo == "A → Z":
-                    st.session_state.sinal_feitos.add(target)
-                    if idx < len(chars) - 1:
-                        st.session_state.sinal_index += 1
-                else:
-                    st.session_state.sinal_random_char = random.choice(chars)
                 st.rerun()
-
-            if not acertou and st.session_state.sinal_acerto_flag:
-                st.session_state.sinal_acerto_flag = False
-
         else:
             st.markdown("""
             <div class="lbr-card" style="text-align:center;padding:40px 20px;">
@@ -307,45 +307,34 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
         st.markdown('<div class="lbr-section">Como Funciona</div>', unsafe_allow_html=True)
         if submodo == "A → Z":
             st.markdown("""
-            <div class="lbr-step">
-                <div class="lbr-step-num">1</div>
-                <div class="lbr-step-text">O sistema exibe a <strong>letra-alvo</strong> e a posição dos dedos correspondente.</div>
-            </div>
-            <div class="lbr-step">
-                <div class="lbr-step-num">2</div>
-                <div class="lbr-step-text">Faça o sinal da letra para a câmera com a mão bem iluminada e visível.</div>
-            </div>
-            <div class="lbr-step">
-                <div class="lbr-step-num">3</div>
-                <div class="lbr-step-text">Quando reconhecido com <strong>70% ou mais</strong> de confiança, o sistema avança automaticamente.</div>
-            </div>
-            <div class="lbr-step">
-                <div class="lbr-step-num">4</div>
-                <div class="lbr-step-text">Use <strong>Pular →</strong> para avançar sem acertar ou <strong>← Anterior</strong> para revisar.</div>
-            </div>
+            <div class="lbr-step"><div class="lbr-step-num">1</div><div class="lbr-step-text">O sistema exibe a <strong>letra-alvo</strong> e a <strong>posição dos dedos.</strong></div></div>
+            <div class="lbr-step"><div class="lbr-step-num">2</div><div class="lbr-step-text"><strong>Faça o sinal</strong> para a câmera com boa iluminação.</div></div>
+            <div class="lbr-step"><div class="lbr-step-num">3</div><div class="lbr-step-text">O sistema avança <strong>automaticamente</strong> ao reconhecer o gesto.</div></div>
             """, unsafe_allow_html=True)
         else:
             st.markdown("""
-            <div class="lbr-step">
-                <div class="lbr-step-num">1</div>
-                <div class="lbr-step-text">Uma letra aleatória é exibida — faça o sinal correspondente para a câmera.</div>
-            </div>
-            <div class="lbr-step">
-                <div class="lbr-step-num">2</div>
-                <div class="lbr-step-text">Acertos consecutivos aumentam seu <strong>🔥 streak</strong>.</div>
-            </div>
-            <div class="lbr-step">
-                <div class="lbr-step-num">3</div>
-                <div class="lbr-step-text">Travou em algum sinal? Clique em <strong>💡 Ver dica</strong> para ver a posição dos dedos.</div>
-            </div>
-            <div class="lbr-step">
-                <div class="lbr-step-num">4</div>
-                <div class="lbr-step-text">Quanto mais você praticar, mais natural e rápido fica!</div>
-            </div>
+            <div class="lbr-step"><div class="lbr-step-num">1</div><div class="lbr-step-text">Uma letra aleatória é exibida para <strong>testar sua memória</strong>.</div></div>
+            <div class="lbr-step"><div class="lbr-step-num">2</div><div class="lbr-step-text">Acertos consecutivos <strong>aumentam seu streak</strong> visual.</div></div>
+            <div class="lbr-step"><div class="lbr-step-num">3</div><div class="lbr-step-text">Mudar a letra manualmente <strong>zera seu streak</strong>.</div></div>
             """, unsafe_allow_html=True)
 
     with col_info:
-        # display do sinal alvo
+        # Sucesso total
+        if st.session_state.sinal_sucesso_total:
+            st.markdown("""
+                <div class="lbr-card" style="text-align: center; padding: 35px 20px; border-top: 3px solid #EF6603;">
+                    <h4 style="font-size: 1.1rem; color: #E8E9F0; margin-bottom: 12px;">Alfabeto Concluído</h4>
+                    <p style="color: #9A9CB8; line-height: 1.6; font-size: 0.85rem;">Todos os sinais foram concluídos com sucesso.</p>
+                </div>
+            """, unsafe_allow_html=True)
+            if st.button("Reiniciar Alfabeto", width="stretch"):
+                st.session_state.sinal_index = 0
+                st.session_state.sinal_feitos = set()
+                st.session_state.sinal_sucesso_total = False
+                st.rerun()
+            st.stop()
+
+        # Feedback de acerto
         if st.session_state.sinal_acerto_flag:
             st.markdown(f"""
             <div class="lbr-sinal-acerto lbr-flash">
@@ -353,6 +342,31 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
                 <div class="instrucao">✅ Correto!</div>
             </div>
             """, unsafe_allow_html=True)
+            
+            time.sleep(1.2)
+            
+            if st.session_state.arduino_ok:
+                from src import servo
+                servo.apply_pose(POSES[target])
+            
+            if submodo == "Aleatório":
+                st.session_state.sinal_streak += 1
+                st.session_state.sinal_random_char = random.choice(chars)
+            else:
+                st.session_state.sinal_feitos.add(target)
+                if len(st.session_state.sinal_feitos) >= len(chars):
+                    st.session_state.sinal_sucesso_total = True
+                else:
+                    if idx < len(chars) - 1:
+                        st.session_state.sinal_index += 1
+                    else:
+                        for i, c in enumerate(chars):
+                            if c not in st.session_state.sinal_feitos:
+                                st.session_state.sinal_index = i
+                                break
+            
+            st.session_state.sinal_acerto_flag = False
+            st.rerun()
         else:
             st.markdown(f"""
             <div class="lbr-sinal-target">
@@ -361,28 +375,40 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
             </div>
             """, unsafe_allow_html=True)
 
-        # streak
+        # Streak visual dinâmico
         if submodo == "Aleatório" and st.session_state.sinal_streak > 0:
-            streak = st.session_state.sinal_streak
-            emoji = "🔥" if streak >= 3 else "⚡"
-            st.markdown(
-                f'<div class="lbr-recognized">{emoji} {streak} acerto{"s" if streak > 1 else ""} seguido{"s" if streak > 1 else ""}!</div>',
-                unsafe_allow_html=True,
-            )
-        with st.expander("💡 Ver dica — posição dos dedos"):
-            img_path = os.path.join("docs", "alphabet", f"{target}.jpg")
-            if os.path.exists(img_path):
-                col1, col2, col3 = st.columns([1, 2, 1])
-                with col2:
-                    st.image(img_path, width=200)
-                    st.markdown(
-                       "<p style='font-size:0.65rem;color:#6B6D88;text-align:center;margin:2px 0 8px'><a href='https://dicionario.ines.gov.br' target='_blank' style='color:#6B6D88'>Ver movimento no Dicionário INES/MEC</a></p>",
-                        unsafe_allow_html=True,
-                    )
-            render_dedos(POSES.get(target))
-            render_legend()
+            s = st.session_state.sinal_streak
+            if s < 3:
+                color, label, extra_class = "#9A9CB8", "⚡ Começando...", ""
+            elif s < 7:
+                color, label, extra_class = "#FF8533", "🔥 No ritmo!", ""
+            else:
+                color, label, extra_class = "#EF6603", "💥 EXCELENTE!", "streak-glow"
 
-        # grade de progresso (só no A→Z)
+            st.markdown(f"""
+                <div class="lbr-card {extra_class}" style="background: #424566; border-left: 4px solid {color}; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; transition: all 0.25s ease;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div>
+                            <h4 style="margin: 0; font-size: 0.65rem; color: #9A9CB8; text-transform: uppercase; letter-spacing: 1.5px;">Sequência Atual</h4>
+                            <p style="margin: 0; font-size: 0.78rem; color: {color}; font-weight: 600;">{label}</p>
+                        </div>
+                    </div>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; font-weight: 800; color: {color}; line-height: 1; text-shadow: 0 2px 8px rgba(0,0,0,0.25);">
+                        {s:02d}
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+
+        # Dica visual (A→Z)
+        if submodo == "A → Z":
+            with st.expander("💡 Ver dica — posição dos dedos"):
+                img_path = os.path.join("docs", "alphabet", f"{target}.jpg")
+                if os.path.exists(img_path):
+                    col1, col2, col3 = st.columns([1, 2, 1])
+                    with col2:
+                        st.image(img_path, width=200)
+
+        # Progresso (A→Z)
         if submodo == "A → Z":
             st.markdown('<div class="lbr-section">Progresso</div>', unsafe_allow_html=True)
             feitos = st.session_state.sinal_feitos
@@ -396,7 +422,6 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
             </div>
             """, unsafe_allow_html=True)
 
-            _KNN_ONLY = {"H", "J", "K", "X", "Z"}
             all_letters = [chr(i) for i in range(65, 91) if chr(i) in POSES]
             rows = [all_letters[i:i+9] for i in range(0, len(all_letters), 9)]
             for row in rows:
@@ -404,41 +429,27 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
                 for gcol, c in zip(gcols, row):
                     with gcol:
                         if c in _KNN_ONLY:
-                            st.markdown(f"""
-                            <div class="lbr-grid-cell" style="opacity:0.3;cursor:not-allowed" title="Sinal com movimento — em breve">
-                                {c}
-                            </div>""", unsafe_allow_html=True)
+                            st.markdown(f'<div class="lbr-grid-cell" style="opacity:0.3">{c}</div>', unsafe_allow_html=True)
                         else:
                             cls = "lbr-grid-cell"
-                            if c in feitos:
-                                cls += " lbr-grid-done"
-                            elif c == target:
-                                cls += " active"
+                            if c in feitos: cls += " lbr-grid-done"
+                            elif c == target: cls += " active"
                             st.markdown(f'<div class="{cls}">{c}</div>', unsafe_allow_html=True)
 
-        # navegação A→Z
+        # Navegação
+        st.markdown("<br>", unsafe_allow_html=True)
         if submodo == "A → Z":
-            st.markdown("<br>", unsafe_allow_html=True)
             c1, c2 = st.columns(2)
             with c1:
-                if st.button("← Anterior", width="stretch",
-                             disabled=st.session_state.sinal_index == 0, key="sinal_prev"):
+                if st.button("← Anterior", width="stretch", disabled=st.session_state.sinal_index == 0, key="sinal_prev"):
                     st.session_state.sinal_index -= 1
-                    st.session_state.sinal_acerto_flag = False
-                    st.session_state.sinal_streak = 0
                     st.rerun()
             with c2:
-                if st.button("Pular →", width="stretch",
-                             disabled=st.session_state.sinal_index == len(chars) - 1,
-                             key="sinal_skip"):
+                if st.button("Pular →", width="stretch", disabled=st.session_state.sinal_index == len(chars) - 1, key="sinal_skip"):
                     st.session_state.sinal_index += 1
-                    st.session_state.sinal_acerto_flag = False
                     st.rerun()
-                    
-        if submodo == "Aleatório":
-            st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("Pular →", width="stretch", key="sinal_skip_random"):
-                import random
+        else:
+            if st.button("Desistir / Mudar Letra", width="stretch", key="sinal_skip_random"):
+                st.session_state.sinal_streak = 0 
                 st.session_state.sinal_random_char = random.choice(chars)
-                st.session_state.sinal_acerto_flag = False
                 st.rerun()
