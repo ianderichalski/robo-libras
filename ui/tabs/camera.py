@@ -145,7 +145,7 @@ def _render_video(col) -> None:
                 if st.session_state.cam_letter is not None:
                     letter = st.session_state.cam_letter
                     confidence_pct = int(st.session_state.cam_confidence * 100)
-                    if confidence_pct >= 30:
+                    if confidence_pct >= 50:
                         st.markdown(
                             f'<div class="lbr-cam-status detecting">Você sinalizou <strong>{letter}</strong> — {confidence_pct}% de confiança</div>',
                             unsafe_allow_html=True,
@@ -290,7 +290,7 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
             acertou = (
                 st.session_state.cam_hand_detected
                 and letter
-                and confidence_pct >= 30
+                and confidence_pct >= 50
                 and letter == target
             )
 
