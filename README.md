@@ -4,38 +4,38 @@
 [![Arduino](https://img.shields.io/badge/Arduino-Firmata-00979D?style=flat-square&logo=arduino&logoColor=white)](https://www.arduino.cc/)
 [![MediaPipe](https://img.shields.io/badge/MediaPipe-0.10%2B-FF6F00?style=flat-square)](https://mediapipe.dev/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.30%2B-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0)
 
-<img src="docs/demo.gif" alt="Demonstração  mão robótica" width="600">
+<img src="docs/demo.gif" alt="Demonstração RoboLibras" width="600">
 
 ---
 
 <h4>RoboLibras: Objeto de Aprendizagem Multimodal para o Ensino do Alfabeto Manual da LIBRAS</h4>
 
-
-  <a href="#arquitetura-do-sistema">Arquitetura do Sistema</a> •
-  <a href="#hardware">Hardware</a> •
-  <a href="#instalação-e-configuração">Instalação e Configuração</a> •
-  <a href="#uso">Uso</a> •
-  <a href="#calibração-dos-servos">Calibração dos Servos</a> •
-  <a href="#estrutura-do-repositório">Estrutura do Repositório</a> •
-  <a href="#dependências">Dependências</a> •
-  <a href="#limitações-conhecidas">Limitações Conhecidas</a> •
-  <a href="#trabalhos-futuros">Trabalhos Futuros</a> •
-  <a href="#referências">Referências</a> 
+<a href="#resumo">Resumo</a> •
+<a href="#arquitetura-do-sistema">Arquitetura</a> •
+<a href="#hardware">Hardware</a> •
+<a href="#instalação">Instalação</a> •
+<a href="#uso">Uso</a> •
+<a href="#estrutura-do-repositório">Estrutura</a> •
+<a href="#limitações-conhecidas">Limitações</a> •
+<a href="#referências">Referências</a>
 
 </div>
 
---- 
+---
 
 ## Resumo
 
-O ensino de Língua Brasileira de Sinais (LIBRAS) em contextos inclusivos enfrenta a escassez de recursos didáticos interativos que permitam a visualização concreta dos sinais manuais. Este trabalho apresenta o RoboLibras, um objeto de aprendizagem para o ensino do alfabeto manual da LIBRAS que integra três modalidades de interação — texto digitado, voz e gestos via câmera — com a reprodução física dos sinais por uma mão robótica de baixo custo. O sistema utiliza visão computacional e aprendizado de máquina para reconhecer a pose da mão do usuário em tempo real, oferecendo feedback imediato sobre o sinal realizado. A interface web disponibiliza modos de exploração livre, soletração guiada e prática com a câmera, permitindo uso tanto pelo professor quanto pelo estudante. O RoboLibras fundamenta-se nos princípios de aprendizagem ativa e multimodalidade, atendendo a diferentes estilos de aprendizagem e favorecendo a educação inclusiva.
+O ensino de Língua Brasileira de Sinais (LIBRAS) em contextos inclusivos enfrenta a escassez de recursos didáticos interativos. Este trabalho apresenta o RoboLibras, um objeto de aprendizagem para o ensino do alfabeto manual da LIBRAS que integra três modalidades de interação — texto, voz e gestos via câmera — com o controle de uma mão robótica. O sistema utiliza visão computacional e aprendizado de máquina para reconhecer a pose da mão do usuário em tempo real, oferecendo feedback imediato sobre o sinal realizado. A interface web disponibiliza cinco modos de aprendizagem — Modo Aula, Quiz, Soletração, Espelhamento e Siga o Sinal — permitindo uso tanto pelo professor quanto pelo estudante, com ou sem Arduino conectado.
+
+---
 
 ## Arquitetura do Sistema
 
 ### Visão Geral
 
-<img src="docs/arquitetura_sistema.png" alt="Demonstração  mão robótica" width="600">
+<img src="docs/arquitetura.svg" alt="Arquitetura do Sistema" width="600">
 
 ### Modalidades de entrada
 
@@ -43,7 +43,7 @@ O ensino de Língua Brasileira de Sinais (LIBRAS) em contextos inclusivos enfren
 |---|---|---|
 | **Texto** | Soletração sequencial a partir de string digitada pelo usuário | `src/speller.py` |
 | **Voz** | Reconhecimento de fala contínuo em pt-BR em thread assíncrona | `src/voice.py` + Google Speech API |
-| **Câmera** | Espelhamento em tempo real via estimativa de pose da mão | `src/camera.py` + MediaPipe |
+| **Câmera** | Reconhecimento e espelhamento em tempo real via estimativa de pose da mão | `src/camera.py` + MediaPipe |
 
 ### Codificação das poses
 
@@ -63,7 +63,9 @@ Cada caractere é representado como um vetor de 5 valores discretos (um por dedo
 #  ○ aberto      ○ aberto      ● fechado   ● fechado   ● fechado
 ```
 
-O dicionário completo de poses (`src/poses.py`) cobre **32 sinais**: letras A–Z e dígitos 0–5. Os dígitos 6–9 requerem duas mãos e não são suportados nesta versão. O módulo de voz converte números por extenso em português para seus dígitos correspondentes (`"zero"` → `0`, `"um"` → `1`, ..., `"cinco"` → `5`).
+O dicionário completo de poses (`src/poses.py`) cobre as **26 letras** do alfabeto manual da LIBRAS (A–Z), além dos dígitos 0–5 como suporte extra.
+
+---
 
 ## Hardware
 
@@ -73,7 +75,7 @@ O dicionário completo de poses (`src/poses.py`) cobre **32 sinais**: letras A�
 |---|---|---|
 | Arduino Uno / Nano | 1 | Qualquer placa compatível com StandardFirmata |
 | Micro servo SG90 | 5 | Torque: 1,8 kgf·cm; range: 0–180°; alimentação: 4,8–6 V |
-| Kit de mão robótica | 1 | [Kit Mão Robótica 3D + Servos — Compatível com Arduino](https://produto.mercadolivre.com.br/MLB-3637665659-kit-mo-robotica-3d-servos-compativel-com-arduino-_JM) — impressão 3D, acionamento por tendões |
+| Mão robótica | 1 | Impressão 3D com acionamento por tendões |
 | Fios jumper M-M | ~16 | Conexão servos → pinos digitais do Arduino |
 
 > ⚠️ **Alimentação:** recomenda-se fonte externa regulada de 5 V para os servos. Alimentar 5 servos SG90 simultaneamente pelo pino 5 V do Arduino pode exceder a corrente máxima suportada (~500 mA via USB), causando instabilidade ou danos à placa.
@@ -90,7 +92,9 @@ O dicionário completo de poses (`src/poses.py`) cobre **32 sinais**: letras A�
 
 > Para alterar a pinagem, edite `src/config.py` → `FINGER_PINS`.
 
-## Instalação e Configuração
+---
+
+## Instalação
 
 ### Firmware do Arduino
 
@@ -102,7 +106,7 @@ Arduino IDE → Arquivo → Exemplos → Firmata → StandardFirmata → Upload
 
 ### Ambiente Python
 
-> 💡 **Recomendado: Python 3.10.** A biblioteca `pyFirmata 1.1.0` utiliza `inspect.getargspec`, removido no Python 3.11+. Versões superiores podem funcionar com ajustes no código, mas podem causar erros na inicialização do Arduino.
+> 💡 **Recomendado: Python 3.10.** A biblioteca `pyFirmata 1.1.0` utiliza `inspect.getargspec`, removido no Python 3.11+.
 
 ```bash
 git clone https://github.com/ianderichalski/robo-libras.git
@@ -119,8 +123,6 @@ pip install -r requirements.txt
 
 ### PyAudio (modo voz)
 
-O `pyaudio` depende de bibliotecas nativas e requer instalação separada:
-
 | Sistema | Comando |
 |---|---|
 | **Windows** | `pip install pipwin && pipwin install pyaudio` |
@@ -128,14 +130,6 @@ O `pyaudio` depende de bibliotecas nativas e requer instalação separada:
 | **macOS** | `brew install portaudio && pip install pyaudio` |
 
 > O modo de voz requer conexão com a internet para acessar a Google Speech API.
-
-### Modelo MediaPipe
-
-O arquivo `hand_landmarker.task` é baixado automaticamente na primeira execução do modo câmera e salvo em `models/`. Para download manual:
-
-```
-https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task
-```
 
 ### Porta serial
 
@@ -147,9 +141,9 @@ SERIAL_PORT = "COM4"               # Windows
 # SERIAL_PORT = "/dev/cu.usbmodem..."  # macOS
 ```
 
-## Uso
+---
 
-### Interface Web (recomendado)
+## Uso
 
 ```bash
 streamlit run app.py
@@ -159,158 +153,70 @@ Abre automaticamente no navegador. Disponibiliza todos os modos de aprendizagem:
 
 | Modo | Descrição | Requer Arduino |
 |---|---|---|
-| **Soletração Livre** | Digite ou fale uma palavra e a mão robótica soletra letra por letra | Sim |
-| **Modo Aula** | Explore o alfabeto A–Z com imagem, painel de dedos e execução na mão robótica | Opcional |
-| **Quiz** | Identifique a letra correspondente ao sinal exibido | Opcional |
-| **Espelhamento** | Espelhe seus gestos na mão robótica em tempo real via câmera | Sim |
+| **Modo Aula** | Explore o alfabeto A–Z com imagem e painel de dedos | Não |
+| **Quiz** | Identifique a letra correspondente ao sinal exibido | Não |
 | **Siga o Sinal** | Pratique os sinais A–Z ou em modo aleatório com reconhecimento via câmera | Não |
+| **Soletração Livre** | Digite ou fale uma palavra e a mão robótica soletra letra por letra | Sim |
+| **Espelhamento** | Espelhe seus gestos na mão robótica em tempo real via câmera | Sim |
 
-### Interface de Linha de Comando
+> Para calibração dos servos, consulte [CALIBRATION.md](CALIBRATION.md).
 
-```bash
-python main.py
-```
-
-Menu interativo com os modos Voz, Texto, Câmera e Teste dos servos. Requer Arduino conectado.
-
-## Calibração dos Servos
-
-> ⚠️ Os ângulos definidos em `src/config.py` foram calibrados especificamente para o modelo de mão utilizado. Modelos com dimensões de articulação ou comprimento de tendão distintos **exigem recalibração individual**.
-
-```bash
-python -m tools.calibrate
-python -m tools.calibrate --port COM3   # porta alternativa
-```
-
-### Controles interativos
-
-| Tecla | Ação |
-|---|---|
-| `d` / `a` | Incrementa / decrementa ±1° |
-| `D` / `A` | Incrementa / decrementa ±10° |
-| `1` | Salva ângulo atual como **aberto** |
-| `2` | Salva ângulo atual como **pouco** |
-| `3` | Salva ângulo atual como **meio** |
-| `4` | Salva ângulo atual como **fechado** |
-| `t` | Executa sequência de teste completa do dedo |
-| `q` | Confirma dedo atual e avança ao próximo |
-
-Ao concluir todos os dedos, o script imprime o bloco `SERVO_ANGLES` completo para substituição em `src/config.py`.
-
-### Boas práticas
-
-- Incremente o ângulo gradualmente (passos de 5°) e interrompa assim que o dedo atingir a posição desejada visualmente
-- Não utilize 180° como padrão para a posição fechada — o limite seguro é o ângulo imediatamente anterior à resistência mecânica da articulação
-- Um chiado leve em repouso é inerente ao SG90 (vibração da bobina pelo sinal PWM contínuo do Firmata) e não indica defeito; chiado intenso em uma pose específica indica que o ângulo ultrapassa o limite físico do mecanismo
+---
 
 ## Estrutura do Repositório
 
 ```
-├── app.py                    # Ponto de entrada da interface web (Streamlit)
-├── main.py                   # Interface de linha de comando
-├── requirements.txt          # Dependências Python
-├── README.md
-├── LICENSE
-├── .gitignore
+├── app.py                  # Ponto de entrada da interface web (Streamlit)
+├── main.py                 # Interface de linha de comando
+├── requirements.txt
+├── CALIBRATION.md          # Guia de calibração dos servos
 │
-├── .streamlit/
-│   └── config.toml           # Configuração visual da interface web
+├── src/                    # Lógica de negócio
+│   ├── config.py           # Parâmetros centralizados (pinos, ângulos, timing)
+│   ├── poses.py            # Dicionário de poses LIBRAS (A–Z, 0–5)
+│   ├── servo.py            # Controlador de hardware via pyFirmata
+│   ├── speller.py          # Motor de soletração
+│   ├── voice.py            # Listener de voz assíncrono
+│   ├── camera.py           # Pipeline de câmera (MediaPipe + OpenCV)
+│   └── recognizer.py       # Classificador para reconhecimento de gestos
 │
-├── docs/
-│   ├── alphabet/             # Imagens do alfabeto manual da LIBRAS (A–Z)
-│   └── .gitkeep
+├── ui/                     # Interface Streamlit
+│   ├── tabs/               # Abas da interface
+│   └── ...
 │
-├── models/
-│   ├── hand_landmarker.task  # Modelo MediaPipe (download automático, não versionado)
-│   └── rf_libras.pkl         # Modelo Random Forest para reconhecimento de gestos
-│
-├── src/                      # Módulos do sistema (lógica de negócio)
-│   ├── config.py             # Parâmetros centralizados (pinos, ângulos, timing)
-│   ├── poses.py              # Dicionário de poses LIBRAS (A–Z, 0–5)
-│   ├── servo.py              # Controlador de hardware via pyFirmata
-│   ├── speller.py            # Motor de soletração com suporte a callbacks
-│   ├── voice.py              # Listener de voz assíncrono (threading)
-│   ├── camera.py             # Pipeline de câmera (MediaPipe + OpenCV)
-│   └── recognizer.py         # Classificador KNN para reconhecimento de letras
-├── ui/                       # Interface Streamlit (apresentação)
-│   ├── styles.py             # CSS customizado
-│   ├── state.py              # Inicialização do session_state
-│   ├── components.py         # Componentes visuais reutilizáveis
-│   ├── actions.py            # Lógica de ações (conexão, soletração, câmera)
-│   └── tabs/                 # Abas da interface
-│       ├── texto_voz.py      # Aba Texto / Voz
-│       ├── camera.py         # Aba Câmera
-│       └── sobre.py          # Aba Sobre
-│
-├── tools/
-    ├── calibrate.py          # Ferramenta interativa de calibração dos servos
-    ├── extract_landmarks.py  # Extrai landmarks das imagens para treino
-    └── train_model.py        # Treinamento do modelo Random Forest
+├── models/                 # Modelos de ML (gerados/baixados automaticamente)
+├── docs/                   # Imagens e assets de documentação
+└── tools/                  # Utilitários (calibração, treino do modelo)
 ```
 
-## Dependências
-
-| Biblioteca | Versão | Finalidade |
-|---|---|---|
-| pyFirmata | 1.1.0 | Comunicação serial com Arduino via protocolo Firmata |
-| Streamlit | ≥ 1.30 | Interface web interativa |
-| MediaPipe | ≥ 0.10.18 | Estimativa de pose da mão (21 landmarks) |
-| OpenCV | ≥ 4.8 | Captura e anotação de frames da câmera |
-| SpeechRecognition | 3.10.4 | Interface com Google Speech API (pt-BR) |
-| NumPy | ≥ 1.26, < 2 | Processamento matricial de imagem |
-| Pillow | ≥ 10.0 | Suporte a formatos de imagem no Streamlit |
-| protobuf | ≥ 4.25, < 5 | Serialização interna do MediaPipe |
-| scikit-learn | ≥ 1.0 | Modelo Random Forest para reconhecimento de gestos |
+---
 
 ## Limitações Conhecidas
 
-- **Modo câmera:** a detecção de landmarks pelo MediaPipe opera com apenas uma mão por frame e requer iluminação adequada e contraste com o fundo
-- **Modo voz:** depende de conexão com a internet e da disponibilidade da Google Speech API; ruído ambiente pode degradar o reconhecimento
-- **Calibração:** os ângulos são específicos ao modelo físico utilizado e não são transferíveis diretamente a outros kits de mão robótica
-- **Dígitos 6–9:** os sinais de 6 a 9 em LIBRAS requerem duas mãos simultâneas e não são suportados nesta versão
-- **Arduino opcional:** os modos Aula, Quiz e Siga o Sinal funcionam sem Arduino conectado — apenas a Soletração Livre requer a mão robótica
+- **Letras H, J, K, X, Z:** envolvem movimento e não são detectáveis por classificação de pose estática — suporte planejado para versões futuras
+- **Modo câmera:** requer iluminação adequada e contraste com o fundo
+- **Modo voz:** depende de internet e da Google Speech API; sensível a ruído ambiente
+- **Calibração:** os ângulos são específicos ao modelo físico utilizado
+
+---
 
 ## Trabalhos Futuros
 
-**v2.0 — Expansão para LIBRAS completa**
-- Suporte a palavras e frases completas em LIBRAS, além do alfabeto manual
-- Segunda mão robótica para suporte aos dígitos 6–9 e sinais compostos
+- Suporte a palavras e frases completas em LIBRAS
+- Segunda mão robótica para sinais compostos
+- Testes formais de usabilidade em sala de aula
+- Suporte a gestos dinâmicos (letras H, J, K, X, Z)
+
+---
 
 ## Referências
 
-[1] Zhang, F.; Bazarevsky, V.; Vakunov, A.; Tkachenka, A.; Sung, G.; Chang, C.; Grundmann, M. (2020).  
-*MediaPipe Hands: On-device Real-time Hand Tracking.*  
-arXiv:2006.10214.  
-https://arxiv.org/abs/2006.10214  
+**[1]** Zhang, F., Bazarevsky, V., Vakunov, A., Tkachenka, A., Sung, G., Chang, C., and Grundmann, M. (2020). MediaPipe Hands: On-device Real-time Hand Tracking. *arXiv:2006.10214*. https://arxiv.org/abs/2006.10214
 
-[2] Google LLC. (2023).  
-*MediaPipe Hand Landmarker — Hand landmarks detection guide.*  
-Google for Developers.  
-https://developers.google.com/mediapipe/solutions/vision/hand_landmarker  
+**[2]** Oliveira, W. (2024). *LIBRAS — Hand Landmarks Dataset*. Kaggle. https://www.kaggle.com/datasets/williansoliveira/libras
 
-[3] Firmata Developers.  
-*StandardFirmata — Firmata firmware for Arduino.*  
-GitHub.  
-https://github.com/firmata/arduino  
+**[3]** Gonzalez Amador, K. D. (2025). *Low-Cost Open-Source Ambidextrous Robotic Hand with 23 Direct-Drive Servos for American Sign Language Alphabet.* arXiv:2509.03690. https://arxiv.org/abs/2509.03690
 
-[4] Gonzalez Amador, K. D. (2025).  
-*Low-Cost Open-Source Ambidextrous Robotic Hand with 23 Direct-Drive Servos for American Sign Language Alphabet.*  
-arXiv:2509.03690.  
-https://arxiv.org/abs/2509.03690  
+**[4]** Adeyanju, I. A. et al. (2023). Design and prototyping of a robotic hand for sign language using locally-sourced materials. *Scientific African*, 19, e01533. https://doi.org/10.1016/j.sciaf.2022.e01533
 
-[5] Adeyanju, I. A. et al. (2023).  
-*Design and prototyping of a robotic hand for sign language using locally-sourced materials.*  
-Scientific African, 19, e01533.  
-https://doi.org/10.1016/j.sciaf.2022.e01533  
-
-[6] IBGE — Instituto Brasileiro de Geografia e Estatística. (2025).  
-*Censo Demográfico 2022: Pessoas com Deficiência e Pessoas Diagnosticadas com Transtorno do Espectro Autista — Resultados Preliminares da Amostra.*  
-https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/43463-censo-2022-brasil-tem-14-4-milhoes-de-pessoas-com-deficiencia
-
-[7] FENEIS — Federação Nacional de Educação e Integração dos Surdos. (2024).  
-*Educação Inclusiva para Alunos Surdos: Um Novo Olhar para a Inclusão.*  
-https://feneis.org.br/educacao-inclusiva-para-alunos-surdos-um-novo-olhar-para-a-inclusao/
-
-[8] INES — Instituto Nacional de Educação de Surdos. (2024).  
-*Dicionário da Língua Brasileira de Sinais V3.*  
-https://dicionario.ines.gov.br
+**[5]** INES — Instituto Nacional de Educação de Surdos. (2024). *Dicionário da Língua Brasileira de Sinais V3.* https://dicionario.ines.gov.br
