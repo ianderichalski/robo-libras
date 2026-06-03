@@ -144,6 +144,6 @@ def _render_professor() -> None:
 def _render_footer() -> None:
     st.markdown(
         '<p style="text-align:center;font-size:0.75rem;color:#6B6D88">'
-        '© 2026, RoboLibras</p>',
+        '© 2026, InteliGente</p>',
         unsafe_allow_html=True,
     )
