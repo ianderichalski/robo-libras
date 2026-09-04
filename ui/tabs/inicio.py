@@ -134,17 +134,47 @@ def _render_arduino() -> None:
         st.markdown(status_html, unsafe_allow_html=True)
 
         if not st.session_state.arduino_ok:
-            c1, c2 = st.columns([2, 2])
+            from ui.actions import list_serial_ports, get_default_port
+
+            ports = list_serial_ports()
+            default = get_default_port()
+
+            c1, c2 = st.columns([3, 2])
             with c1:
-                port = st.text_input("Porta serial", value="COM4", label_visibility="collapsed",
-                                     placeholder="ex: COM4", key="port_input")
+                if ports:
+                    default_idx = 0
+                    for i, p in enumerate(ports):
+                        if default.lower() in p.lower():
+                            default_idx = i
+                            break
+                    port = st.selectbox(
+                        "Porta serial",
+                        options=ports,
+                        index=default_idx,
+                        label_visibility="collapsed",
+                        key="port_select",
+                    )
+                else:
+                    port = st.text_input(
+                        "Porta serial",
+                        value=default,
+                        label_visibility="collapsed",
+                        placeholder="ex: COM4",
+                        key="port_input",
+                    )
+                    st.caption("Nenhuma porta detectada. Digite manualmente.")
             with c2:
-                if st.button("Conectar", key="btn_connect", width="stretch"):
-                    ok, msg = connect(port)
-                    if ok:
+                cb, cc = st.columns([1, 3])
+                with cb:
+                    if st.button("↺", key="btn_refresh", help="Atualizar lista de portas"):
                         st.rerun()
-                    else:
-                        st.error(msg)
+                with cc:
+                    if st.button("Conectar", key="btn_connect", width="stretch"):
+                        ok, msg = connect(port)
+                        if ok:
+                            st.rerun()
+                        else:
+                            st.error(msg)
         else:
             if st.button("Desconectar", key="btn_disconnect"):
                 disconnect()

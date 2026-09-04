@@ -1,6 +1,7 @@
 import queue
 import time
 import threading
+import platform
 import cv2
 import streamlit as st
 
@@ -10,6 +11,27 @@ from src.speller import spell
 from src.voice import VoiceListener
 from src.recognizer import recognize
 from src.camera import _get_detector, _landmarks_to_finger_states, _landmarks_to_vector, _send_to_servos, _draw_landmarks
+
+# detecção automática de portas seriais
+def list_serial_ports() -> list[str]:
+    """Retorna lista de portas seriais com dispositivo físico conectado."""
+    try:
+        import serial.tools.list_ports
+        ports = [p.device for p in serial.tools.list_ports.comports()
+                 if p.vid is not None or p.description not in ("n/a", "")]
+        return sorted(ports)
+    except Exception:
+        return []
+
+def get_default_port() -> str:
+    """Retorna a porta padrão sugerida com base no SO."""
+    os_name = platform.system()
+    if os_name == "Windows":
+        return "COM4"
+    elif os_name == "Darwin":
+        return "/dev/cu.usbmodem"
+    else:
+        return "/dev/ttyUSB0"
 
 # conexão arduino
 def _friendly_serial_error(port, e):
@@ -29,7 +51,7 @@ def connect(port: str) -> tuple[bool, str]:
         return True, "Conectado!"
     except Exception as e:
         st.session_state.arduino_ok = False
-        return False, _friendly_serial_error(port, e)
+        return False, f"{type(e).__name__}: {e}"
 
 def disconnect() -> None:
     try:
