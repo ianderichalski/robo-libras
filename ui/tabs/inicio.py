@@ -1,5 +1,6 @@
 import base64
 import streamlit as st
+from ui.styles import palette
 
 def render(tab) -> None:
     with tab:
@@ -9,25 +10,27 @@ def render(tab) -> None:
         _render_arduino()
 
 def _render_hero() -> None:
+    p = palette()
     with open("docs/logo.png", "rb") as f:
-            img_b64 = base64.b64encode(f.read()).decode()
+        img_b64 = base64.b64encode(f.read()).decode()
     logo = f'<img src="data:image/png;base64,{img_b64}" style="width:120px;border-radius:16px">'
 
     st.markdown(f"""
     <div style="text-align:center;padding:3rem 1rem 2rem">
         {logo}
-        <div style="font-size:2.4rem;font-weight:700;color:#E8E9F0;margin:20px 0 8px;letter-spacing:-0.5px">RoboLibras</div>
-        <div style="font-size:0.9rem;color:#9A9CB8;max-width:540px;margin:0 auto;line-height:1.8">
-            Aprenda o alfabeto manual da <strong style="color:#E8E9F0">Língua Brasileira de Sinais</strong>
+        <div style="font-size:2.4rem;font-weight:700;color:{p['text']};margin:20px 0 8px;letter-spacing:-0.5px">RoboLibras</div>
+        <div style="font-size:0.9rem;color:{p['text_sec']};max-width:540px;margin:0 auto;line-height:1.8">
+            Aprenda o alfabeto manual da <strong style="color:{p['text']}">Língua Brasileira de Sinais</strong>
             de forma interativa — por texto, voz ou câmera.
         </div>
     </div>
     """, unsafe_allow_html=True)
 
 def _render_modes() -> None:
-    st.markdown("""
+    p = palette()
+    st.markdown(f"""
     <div style="font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;
-    color:#6B6D88;margin-bottom:1rem">Modos de aprendizagem</div>
+    color:{p['muted']};margin-bottom:1rem">Modos de aprendizagem</div>
     """, unsafe_allow_html=True)
 
     modes = [
@@ -85,11 +88,11 @@ def _render_modes() -> None:
     for col, mode in zip(cols, modes):
         with col:
             st.markdown(f"""
-            <div style="background:#3D4166;border:1px solid #525680;border-top:2px solid {mode['cor']};
+            <div style="background:{p['surface']};border:1px solid {p['border']};border-top:2px solid {mode['cor']};
             border-radius:10px;padding:20px 16px;text-align:center;min-height:190px">
                 <div style="margin-bottom:12px">{mode['svg']}</div>
-                <div style="font-size:0.85rem;font-weight:600;color:#E8E9F0;margin-bottom:6px">{mode['titulo']}</div>
-                <div style="font-size:0.74rem;color:#9A9CB8;line-height:1.6;margin-bottom:10px">{mode['desc']}</div>
+                <div style="font-size:0.85rem;font-weight:600;color:{p['text']};margin-bottom:6px">{mode['titulo']}</div>
+                <div style="font-size:0.74rem;color:{p['text_sec']};line-height:1.6;margin-bottom:10px">{mode['desc']}</div>
                 <div style="font-size:0.62rem;color:{mode['cor']};text-transform:uppercase;letter-spacing:1px;font-weight:600">
                     Aba {mode['aba']}
                 </div>
@@ -97,20 +100,22 @@ def _render_modes() -> None:
             """, unsafe_allow_html=True)
 
 def _render_start() -> None:
+    p = palette()
     st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("""
-    <div style="background:#252840;border:1px solid #525680;border-radius:10px;padding:18px 24px">
-        <div style="font-size:0.82rem;font-weight:600;color:#E8E9F0;margin-bottom:6px">Por onde começar?</div>
-        <div style="font-size:0.76rem;color:#9A9CB8;line-height:1.8">
+    st.markdown(f"""
+    <div style="background:{p['hero_bg']};border:1px solid {p['border']};border-radius:10px;padding:18px 24px">
+        <div style="font-size:0.82rem;font-weight:600;color:{p['text']};margin-bottom:6px">Por onde começar?</div>
+        <div style="font-size:0.76rem;color:{p['text_sec']};line-height:1.8">
             Acesse o <strong style="color:#EF6603">Modo Aula</strong> para explorar o alfabeto,
             teste seus conhecimentos no <strong style="color:#EF6603">Quiz</strong> e
             pratique com a câmera no <strong style="color:#EF6603">Siga o Sinal</strong>.
-            A maioria dos modos funciona <strong style="color:#C8CAE0">sem Arduino conectado</strong>.
+            A maioria dos modos funciona <strong style="color:{p['text']}">sem Arduino conectado</strong>.
         </div>
     </div>
     """, unsafe_allow_html=True)
 
 def _render_arduino() -> None:
+    p = palette()
     from ui.actions import connect, disconnect
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -126,7 +131,7 @@ def _render_arduino() -> None:
 
     with c_left:
         st.markdown(f"""
-        <p style="font-size:0.78rem;color:#9A9CB8;margin:0 0 10px;line-height:1.7">
+        <p style="font-size:0.78rem;color:{p['text_sec']};margin:0 0 10px;line-height:1.7">
             Conecte o Arduino para usar a <strong style="color:#EF6603">Soletração Livre</strong>
             e reproduzir os sinais fisicamente. Os demais modos funcionam sem conexão.
         </p>
@@ -143,8 +148,8 @@ def _render_arduino() -> None:
             with c1:
                 if ports:
                     default_idx = 0
-                    for i, p in enumerate(ports):
-                        if default.lower() in p.lower():
+                    for i, pt in enumerate(ports):
+                        if default.lower() in pt.lower():
                             default_idx = i
                             break
                     port = st.selectbox(
