@@ -7,8 +7,8 @@ from ui.tabs import inicio, texto_voz, camera, sobre
 
 # inicialização
 st.set_page_config(page_title="RoboLibras", page_icon="docs/logo.png", layout="wide")
-styles.inject()
 state.init()
+styles.inject()
 
 # cabeçalho + conexão arduino
 tooltip_on = "Arduino conectado via Firmata. Clique em Desconectar para encerrar a conexão serial."
@@ -19,6 +19,14 @@ status_html = (
     if st.session_state.arduino_ok else
     f'<span class="lbr-hdr-badge off" title="{tooltip_off}"><span class="dot"></span>Desconectado</span>'
 )
+
+# toggle de tema
+_theme_icon = "☀" if st.session_state.theme == "dark" else "☾"
+_c1, _c2 = st.columns([12, 1])
+with _c2:
+    if st.button(_theme_icon, key="btn_theme"):
+        styles.toggle()
+        st.rerun()
 
 # processar fila de voz (roda sempre, independente da aba ativa)
 process_voice(st.session_state.voice_delay)

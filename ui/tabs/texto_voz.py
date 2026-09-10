@@ -53,7 +53,7 @@ def _render_left(col, mode="Soletração") -> None:
 
         if st.session_state.spelling and st.session_state.current_text:
             st.markdown(
-                "<div style='margin-top:10px; font-size:0.78rem; color:#9A9CB8; "
+                "<div style='margin-top:10px; font-size:0.78rem; color:var(--lbr-text-sec,#9A9CB8); "
                 "font-weight:600; text-transform:uppercase; letter-spacing:1px'>Soletreando</div>",
                 unsafe_allow_html=True,
             )
@@ -220,7 +220,7 @@ def _render_aula() -> None:
             with col2:
                 st.image(img_path, width=200)
                 st.markdown(
-                    "<p style='font-size:0.65rem;color:#6B6D88;text-align:center;margin:2px 0 8px'><a href='https://dicionario.ines.gov.br' target='_blank' style='color:#6B6D88'>Ver movimento no Dicionário INES/MEC</a></p>",
+                    "<p style='font-size:0.65rem;color:var(--lbr-muted,#6B6D88);text-align:center;margin:2px 0 8px'><a href='https://dicionario.ines.gov.br' target='_blank' style='color:var(--lbr-muted,#6B6D88)'>Ver movimento no Dicionário INES/MEC</a></p>",
                     unsafe_allow_html=True,
                 )
 
@@ -234,7 +234,7 @@ def _render_aula() -> None:
                 st.rerun()
         with c2:
             st.markdown(
-                f"<div style='text-align:center;font-size:0.8rem;color:#9A9CB8;padding-top:8px'>"
+                f"<div style='text-align:center;font-size:0.8rem;color:var(--lbr-text-sec,#9A9CB8);padding-top:8px'>"
                 f"{idx + 1} / {len(chars)}</div>",
                 unsafe_allow_html=True,
             )
@@ -257,7 +257,7 @@ def _render_aula() -> None:
         st.markdown(f"""
         <div class="lbr-card">
             <h4>{vistos} de {total} sinais explorados ({pct}%)</h4>
-            <div style="background:#525680;border-radius:4px;height:8px;margin-top:8px">
+            <div style="background:var(--lbr-border,#525680);border-radius:4px;height:8px;margin-top:8px">
                 <div style="background:#EF6603;width:{pct}%;height:8px;border-radius:4px"></div>
             </div>
         </div>
@@ -326,7 +326,7 @@ def _render_quiz() -> None:
             with col2:
                 st.image(img_path, width=200)
                 st.markdown(
-                    "<p style='font-size:0.65rem;color:#6B6D88;text-align:center;margin:2px 0 8px'><a href='https://dicionario.ines.gov.br' target='_blank' style='color:#6B6D88'>Ver movimento no Dicionário INES/MEC</a></p>",
+                    "<p style='font-size:0.65rem;color:var(--lbr-muted,#6B6D88);text-align:center;margin:2px 0 8px'><a href='https://dicionario.ines.gov.br' target='_blank' style='color:var(--lbr-muted,#6B6D88)'>Ver movimento no Dicionário INES/MEC</a></p>",
                     unsafe_allow_html=True,
                 )
         
@@ -415,7 +415,7 @@ def _render_quiz() -> None:
                     <div style="font-size: 1.2rem; color: #EF6603; font-weight: bold;">{pct}%</div>
                 </div>
             </div>
-            <div style="background:#525680;border-radius:4px;height:6px;">
+            <div style="background:var(--lbr-border,#525680);border-radius:4px;height:6px;">
                 <div style="background:#EF6603;width:{pct}%;height:6px;border-radius:4px"></div>
             </div>
         </div>

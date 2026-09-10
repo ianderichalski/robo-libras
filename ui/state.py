@@ -3,6 +3,7 @@ import threading
 import streamlit as st
 
 _DEFAULTS = {
+    "theme": "dark",
     "arduino_ok": False,
     "spelling": False,
     "current_pose": None,

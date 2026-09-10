@@ -25,7 +25,7 @@ def _render_hero() -> None:
             <h1>O que é o RoboLibras?</h1>
             <div class="tagline">Aprender LIBRAS de forma concreta, interativa e inclusiva.</div>
             <div class="abstract">
-                O <strong style="color:#E8E9F0">RoboLibras</strong> é um objeto de aprendizagem 
+                O <strong style="color:var(--lbr-text,#E8E9F0)">RoboLibras</strong> é um objeto de aprendizagem 
                 para o ensino do alfabeto manual da LIBRAS que integra três modalidades de interação — 
                 <strong>texto digitado</strong>, <strong>voz</strong> e 
                 <strong>gestos via câmera</strong> — com a reprodução física dos sinais por uma 
@@ -61,8 +61,8 @@ def _render_motivation() -> None:
     st.markdown('<div class="about-section-title">Motivação &amp; Problema que Resolve</div>', unsafe_allow_html=True)
     st.markdown("""
     <div class="about-card">
-        <p style="color:#9A9CB8;font-size:0.83rem;line-height:1.8;margin-bottom:16px">
-            A <strong style="color:#E8E9F0">LIBRAS</strong> é reconhecida como meio legal de comunicação 
+        <p style="color:var(--lbr-text-sec,#9A9CB8);font-size:0.83rem;line-height:1.8;margin-bottom:16px">
+            A <strong style="color:var(--lbr-text,#E8E9F0)">LIBRAS</strong> é reconhecida como meio legal de comunicação 
             no Brasil (Lei nº 10.436/2002) e sua presença nas escolas é obrigatória desde o 
             Decreto nº 5.626/2005. No entanto, o ensino do alfabeto manual ainda enfrenta um 
             desafio concreto: a <strong style="color:#EF6603">escassez de recursos didáticos interativos</strong> 
@@ -70,7 +70,7 @@ def _render_motivation() -> None:
             em sala de aula. Materiais impressos e vídeos estáticos limitam o engajamento e 
             dificultam a compreensão da posição exata dos dedos em cada sinal.
         </p>
-        <p style="color:#9A9CB8;font-size:0.83rem;line-height:1.8;margin-bottom:16px">
+        <p style="color:var(--lbr-text-sec,#9A9CB8);font-size:0.83rem;line-height:1.8;margin-bottom:16px">
             Esse cenário é ainda mais relevante considerando que cerca de 
             <strong style="color:#EF6603">10,3 milhões de brasileiros possuem algum grau de deficiência auditiva</strong> 
             (IBGE, 2022), reforçando a necessidade de práticas pedagógicas inclusivas que aproximem 
@@ -78,7 +78,7 @@ def _render_motivation() -> None:
             acessíveis são pilares fundamentais para que a inclusão aconteça de fato nas escolas.
         </p>
         <div style="border-left:3px solid #EF6603;padding-left:16px">
-            <p style="color:#C8CAE0;font-size:0.83rem;line-height:1.8;margin:0">
+            <p style="color:var(--lbr-text-sec,#C8CAE0);font-size:0.83rem;line-height:1.8;margin:0">
                 O RoboLibras nasce como resposta pedagógica a esse desafio — um objeto de 
                 aprendizagem que combina texto, voz e visão computacional para tornar o ensino 
                 do alfabeto manual da LIBRAS concreto, interativo e acessível em qualquer sala de aula.
@@ -92,12 +92,12 @@ def _render_technology() -> None:
     st.markdown('<div class="about-section-title">Tecnologia</div>', unsafe_allow_html=True)
     st.markdown("""
     <div class="about-card">
-        <p style="color:#9A9CB8;font-size:0.83rem;line-height:1.8">
-            O sistema usa um <strong style="color:#E8E9F0">Arduino Uno</strong> para controlar 5 servomotores
+        <p style="color:var(--lbr-text-sec,#9A9CB8);font-size:0.83rem;line-height:1.8">
+            O sistema usa um <strong style="color:var(--lbr-text,#E8E9F0)">Arduino Uno</strong> para controlar 5 servomotores
             que movem cada dedo da mão robótica. A detecção de gestos pela câmera é feita com
-            <strong style="color:#E8E9F0">MediaPipe</strong>, tecnologia do Google capaz de identificar
+            <strong style="color:var(--lbr-text,#E8E9F0)">MediaPipe</strong>, tecnologia do Google capaz de identificar
             a posição da mão em tempo real. O reconhecimento de voz usa o
-            <strong style="color:#E8E9F0">Google Speech</strong> em português.
+            <strong style="color:var(--lbr-text,#E8E9F0)">Google Speech</strong> em português.
             Tudo pode ser executado localmente no computador ou acessado
             diretamente pelo navegador via servidor web.
         </p>
@@ -109,7 +109,7 @@ def _render_professor() -> None:
     st.markdown('<div class="about-section-title">Para o Professor</div>', unsafe_allow_html=True)
     st.markdown("""
     <div class="about-card">
-        <p style="color:#9A9CB8;font-size:0.83rem;line-height:1.8;margin-bottom:16px">
+        <p style="color:var(--lbr-text-sec,#9A9CB8);font-size:0.83rem;line-height:1.8;margin-bottom:16px">
             O RoboLibras foi pensado para ser utilizado em sala de aula como recurso pedagógico
             de apoio ao ensino de LIBRAS. Abaixo estão algumas sugestões de uso:
         </p>
@@ -119,23 +119,23 @@ def _render_professor() -> None:
     p1, p2, p3 = st.columns(3, gap="small")
     with p1:
         st.markdown("""
-        <div style="background:#2F324D;border:1px solid #525680;border-top:2px solid #3B8BD4;border-radius:8px;padding:14px;height:100%">
+        <div style="background:var(--lbr-surface,#3D4166);border:1px solid var(--lbr-border,#525680);border-top:2px solid #3B8BD4;border-radius:8px;padding:14px;height:100%">
             <div style="font-size:0.7rem;font-weight:700;color:#3B8BD4;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Introdução ao Alfabeto</div>
-            <p style="font-size:0.76rem;color:#9A9CB8;line-height:1.65;margin:0">Use o <strong>Modo Aula</strong> para apresentar cada letra do alfabeto manual à turma. A mão robótica executa o sinal enquanto os alunos observam a posição dos dedos no painel.</p>
+            <p style="font-size:0.76rem;color:var(--lbr-text-sec,#9A9CB8);line-height:1.65;margin:0">Use o <strong>Modo Aula</strong> para apresentar cada letra do alfabeto manual à turma. A mão robótica executa o sinal enquanto os alunos observam a posição dos dedos no painel.</p>
         </div>
         """, unsafe_allow_html=True)
     with p2:
         st.markdown("""
-        <div style="background:#2F324D;border:1px solid #525680;border-top:2px solid #3B8BD4;border-radius:8px;padding:14px;height:100%">
+        <div style="background:var(--lbr-surface,#3D4166);border:1px solid var(--lbr-border,#525680);border-top:2px solid #3B8BD4;border-radius:8px;padding:14px;height:100%">
             <div style="font-size:0.7rem;font-weight:700;color:#3B8BD4;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Avaliação Formativa</div>
-            <p style="font-size:0.76rem;color:#9A9CB8;line-height:1.65;margin:0">Utilize o <strong>Quiz</strong> ao final da aula para verificar o aprendizado. Os alunos identificam a letra correspondente ao sinal exibido — sem precisar de Arduino conectado.</p>
+            <p style="font-size:0.76rem;color:var(--lbr-text-sec,#9A9CB8);line-height:1.65;margin:0">Utilize o <strong>Quiz</strong> ao final da aula para verificar o aprendizado. Os alunos identificam a letra correspondente ao sinal exibido — sem precisar de Arduino conectado.</p>
         </div>
         """, unsafe_allow_html=True)
     with p3:
         st.markdown("""
-        <div style="background:#2F324D;border:1px solid #525680;border-top:2px solid #3B8BD4;border-radius:8px;padding:14px;height:100%">
+        <div style="background:var(--lbr-surface,#3D4166);border:1px solid var(--lbr-border,#525680);border-top:2px solid #3B8BD4;border-radius:8px;padding:14px;height:100%">
             <div style="font-size:0.7rem;font-weight:700;color:#3B8BD4;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Prática Individualizada</div>
-            <p style="font-size:0.76rem;color:#9A9CB8;line-height:1.65;margin:0">Oriente os alunos a utilizarem o <strong>Siga o Sinal</strong> com a webcam para praticar individualmente. O modo A→Z garante progressão e o Aleatório desafia os mais avançados.</p>
+            <p style="font-size:0.76rem;color:var(--lbr-text-sec,#9A9CB8);line-height:1.65;margin:0">Oriente os alunos a utilizarem o <strong>Siga o Sinal</strong> com a webcam para praticar individualmente. O modo A→Z garante progressão e o Aleatório desafia os mais avançados.</p>
         </div>
         """, unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
@@ -143,7 +143,7 @@ def _render_professor() -> None:
 
 def _render_footer() -> None:
     st.markdown(
-        '<p style="text-align:center;font-size:0.75rem;color:#6B6D88">'
+        '<p style="text-align:center;font-size:0.75rem;color:var(--lbr-muted,#6B6D88)">'
         '© 2026, InteliGente</p>',
         unsafe_allow_html=True,
     )
