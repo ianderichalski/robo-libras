@@ -57,7 +57,7 @@ def render(tab) -> None:
 def _render_video(col) -> None:
     with col:
         st.markdown('<div class="lbr-section">Câmera - Espelhamento</div>', unsafe_allow_html=True)
-        st.markdown("""<p style='font-size:0.8rem;color:#9A9CB8;margin:0 0 10px'>
+        st.markdown("""<p style='font-size:0.8rem;color:var(--lbr-text-sec,#9A9CB8);margin:0 0 10px'>
             Sua mão é detectada via <strong>MediaPipe Hand Landmarker</strong>. Os estados
             dos dedos são mapeados em tempo real e replicados nos servomotores.
         </p>""", unsafe_allow_html=True)
@@ -195,7 +195,7 @@ def _render_info(col) -> None:
         """, unsafe_allow_html=True)
 
         st.markdown('<div class="lbr-section">Dicas de Uso</div>', unsafe_allow_html=True)
-        st.markdown("""<p style='font-size:0.78rem;color:#9A9CB8;line-height:1.8;margin:0'>
+        st.markdown("""<p style='font-size:0.78rem;color:var(--lbr-text-sec,#9A9CB8);line-height:1.8;margin:0'>
             · Mantenha a mão bem iluminada e visível para a câmera.<br>
             · Posicione a palma voltada para a câmera.<br>
             · Movimentos lentos e deliberados dão melhores resultados.<br>
@@ -323,8 +323,8 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
         if st.session_state.sinal_sucesso_total:
             st.markdown("""
                 <div class="lbr-card" style="text-align: center; padding: 35px 20px; border-top: 3px solid #EF6603;">
-                    <h4 style="font-size: 1.1rem; color: #E8E9F0; margin-bottom: 12px;">Alfabeto Concluído</h4>
-                    <p style="color: #9A9CB8; line-height: 1.6; font-size: 0.85rem;">Todos os sinais foram concluídos com sucesso.</p>
+                    <h4 style="font-size: 1.1rem; color: var(--lbr-text,#E8E9F0); margin-bottom: 12px;">Alfabeto Concluído</h4>
+                    <p style="color: var(--lbr-text-sec,#9A9CB8); line-height: 1.6; font-size: 0.85rem;">Todos os sinais foram concluídos com sucesso.</p>
                 </div>
             """, unsafe_allow_html=True)
             if st.button("Reiniciar Alfabeto", width="stretch"):
@@ -389,7 +389,7 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
                 <div class="lbr-card {extra_class}" style="background: #424566; border-left: 4px solid {color}; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; transition: all 0.25s ease;">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <div>
-                            <h4 style="margin: 0; font-size: 0.65rem; color: #9A9CB8; text-transform: uppercase; letter-spacing: 1.5px;">Sequência Atual</h4>
+                            <h4 style="margin: 0; font-size: 0.65rem; color: var(--lbr-text-sec,#9A9CB8); text-transform: uppercase; letter-spacing: 1.5px;">Sequência Atual</h4>
                             <p style="margin: 0; font-size: 0.78rem; color: {color}; font-weight: 600;">{label}</p>
                         </div>
                     </div>
@@ -416,7 +416,7 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
             st.markdown(f"""
             <div class="lbr-card" style="margin-bottom:8px">
                 <h4>{len(feitos)} de {len(chars)} sinais completados ({pct}%)</h4>
-                <div style="background:#525680;border-radius:4px;height:8px;margin-top:8px">
+                <div style="background:var(--lbr-border,#525680);border-radius:4px;height:8px;margin-top:8px">
                     <div style="background:#EF6603;width:{pct}%;height:8px;border-radius:4px"></div>
                 </div>
             </div>
