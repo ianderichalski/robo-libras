@@ -9,12 +9,20 @@ from ui.actions import start_spell
 
 def render(tab) -> None:
     with tab:
+        if "aprender_mode_sel" not in st.session_state:
+            st.session_state.aprender_mode_sel = "Modo Aula"
+
         mode = st.segmented_control(
             "Modo",
             ["Modo Aula", "Quiz", "Soletração"],
-            default="Modo Aula",
+            default=st.session_state.aprender_mode_sel,
             label_visibility="collapsed",
+            key="aprender_mode_ctrl",
         )
+        if mode is None:
+            mode = st.session_state.aprender_mode_sel
+        else:
+            st.session_state.aprender_mode_sel = mode
 
         if mode == "Soletração":
             col_left, col_right = st.columns([2, 3], gap="large")
