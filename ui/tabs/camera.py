@@ -25,22 +25,47 @@ def render(tab) -> None:
     """, unsafe_allow_html=True)
 
     with tab:
+        if "cam_mode_sel" not in st.session_state:
+            st.session_state.cam_mode_sel = "Siga o Sinal"
+
         mode = st.segmented_control(
             "Modo",
             ["Siga o Sinal", "Espelhamento"],
-            default="Siga o Sinal",
+            default=st.session_state.cam_mode_sel,
             label_visibility="collapsed",
+            disabled=st.session_state.cam_active,
+            key="cam_mode_ctrl",
         )
+        if mode is None:
+            mode = st.session_state.cam_mode_sel
+        else:
+            st.session_state.cam_mode_sel = mode
+
+        # encerra câmera automaticamente ao trocar de modo
+        if st.session_state.get("active_cam_mode") != mode:
+            if st.session_state.cam_active:
+                st.session_state.cam_stop.set()
+                st.session_state.cam_active = False
+                st.session_state.cam_frame = None
+            st.session_state.active_cam_mode = mode
 
         if mode == "Siga o Sinal":
+            if "cam_submodo_sel" not in st.session_state:
+                st.session_state.cam_submodo_sel = "A → Z"
+
             submodo = st.segmented_control(
                 "Submodo",
                 ["A → Z", "Aleatório"],
-                default="A → Z",
+                default=st.session_state.cam_submodo_sel,
                 label_visibility="collapsed",
                 key="sinal_submodo",
                 disabled=st.session_state.cam_active,
             )
+            if submodo is None:
+                submodo = st.session_state.cam_submodo_sel
+            else:
+                st.session_state.cam_submodo_sel = submodo
+
             if st.session_state.cam_active:
                 st.caption("Pare a câmera para trocar o modo.")
         else:
