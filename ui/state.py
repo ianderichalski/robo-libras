@@ -5,6 +5,10 @@ import streamlit as st
 _DEFAULTS = {
     "theme": "dark",
     "arduino_ok": False,
+    "active_tab": None,
+    "active_cam_mode": None,
+    "cam_index": 0,
+    "cameras_list": None,
     "spelling": False,
     "current_pose": None,
     "current_char": "",

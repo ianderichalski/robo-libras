@@ -118,13 +118,51 @@ def process_voice(delay: float) -> None:
         elif t == "error":
             st.session_state.last_recognized = f"Erro: {content}"
 
+def list_cameras(max_test: int = 5) -> list[dict]:
+    import platform
+    import os
+    import glob
+
+    os.environ["OPENCV_LOG_LEVEL"] = "SILENT"
+    cameras = []
+
+    if platform.system() == "Linux":
+        # lista dispositivos via sysfs sem abrir nenhuma câmera
+        devices = sorted(glob.glob("/sys/class/video4linux/video*"))
+        idx = 0
+        for dev_path in devices:
+            dev_name = os.path.basename(dev_path)
+            dev_num = int(dev_name.replace("video", ""))
+            if dev_num % 2 != 0:
+                continue
+            try:
+                with open(f"{dev_path}/name") as f:
+                    name = f.read().strip()
+            except Exception:
+                name = f"Câmera {idx}"
+            cameras.append({"index": f"/dev/{dev_name}", "label": name})
+            idx += 1
+    else:
+        backend = cv2.CAP_DSHOW if platform.system() == "Windows" else cv2.CAP_ANY
+        for i in range(max_test):
+            cap = cv2.VideoCapture(i, backend)
+            if cap.isOpened():
+                cameras.append({"index": i, "label": f"Câmera {i}"})
+                cap.release()
+
+    return cameras
+
 # thread da câmera
-def camera_thread(send_servos: bool, arduino_ok: bool, stop: threading.Event, q: queue.Queue) -> None:
+def camera_thread(send_servos: bool, arduino_ok: bool, stop: threading.Event, q: queue.Queue, cam_index = 0) -> None:
     import platform
     import mediapipe as mp
 
     backend = cv2.CAP_DSHOW if platform.system() == "Windows" else cv2.CAP_ANY
-    cap = cv2.VideoCapture(0, backend)
+    # no Linux usa o caminho direto se for string
+    if isinstance(cam_index, str):
+        cap = cv2.VideoCapture(cam_index)
+    else:
+        cap = cv2.VideoCapture(cam_index, backend)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, CAMERA_WIDTH)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, CAMERA_HEIGHT)
     cap.set(cv2.CAP_PROP_FPS, 30)

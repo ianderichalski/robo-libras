@@ -7,7 +7,7 @@ import time
 import random
 
 from ui.components import render_dedos, render_legend
-from ui.actions import camera_thread
+from ui.actions import camera_thread, list_cameras
 
 def render(tab) -> None:
     # Injeta a animação do Streak
@@ -108,6 +108,28 @@ def _render_video(col) -> None:
                 st.rerun()
 
         if not st.session_state.cam_active:
+            if not st.session_state.get("cameras_list"):
+                st.session_state.cameras_list = list_cameras()
+            cameras = st.session_state.cameras_list
+            if len(cameras) > 1:
+                cam_options = {c["label"]: c["index"] for c in cameras}
+                c1, c2, _ = st.columns([2, 1, 2])
+                with c1:
+                    cam_label = st.selectbox(
+                        "Selecione a câmera",
+                        options=list(cam_options.keys()),
+                        label_visibility="visible",
+                        key="cam_selector",
+                    )
+                    st.session_state.cam_index = cam_options[cam_label]
+                with c2:
+                    st.write("")
+                    st.write("")
+                    if st.button("↺", key="btn_cam_refresh", help="Atualizar lista de câmeras"):
+                        del st.session_state.cameras_list
+                        st.rerun()
+            elif cameras:
+                st.session_state.cam_index = cameras[0]["index"]
             if st.button("▶  Iniciar câmera", width='stretch', key="btn_cam_start"):
                 st.session_state.cam_active = True
                 st.session_state.cam_frame = None
@@ -118,7 +140,7 @@ def _render_video(col) -> None:
                 st.session_state.cam_queue = queue.Queue(maxsize=2)
                 threading.Thread(
                     target=camera_thread,
-                    args=(st.session_state.cam_send_servos, st.session_state.arduino_ok, new_stop, st.session_state.cam_queue),
+                    args=(st.session_state.cam_send_servos, st.session_state.arduino_ok, new_stop, st.session_state.cam_queue, st.session_state.get("cam_index", 0)),
                     daemon=True,
                 ).start()
                 st.rerun()
@@ -263,6 +285,31 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
         st.markdown('<div class="lbr-section">Câmera — Siga o Sinal</div>', unsafe_allow_html=True)
 
         if not st.session_state.cam_active:
+            if not st.session_state.get("cameras_list"):
+                st.session_state.cameras_list = list_cameras()
+            cameras = st.session_state.cameras_list
+            if len(cameras) > 1:
+                cam_options = {c["label"]: c["index"] for c in cameras}
+                current = st.session_state.get("cam_index", 0)
+                current_idx = list(cam_options.values()).index(current) if current in cam_options.values() else 0
+                c1, c2, _ = st.columns([2, 1, 2])
+                with c1:
+                    cam_label = st.selectbox(
+                        "Selecione a câmera",
+                        options=list(cam_options.keys()),
+                        label_visibility="visible",
+                        key="sinal_cam_selector",
+                        index=current_idx,
+                    )
+                    st.session_state.cam_index = cam_options[cam_label]
+                with c2:
+                    st.write("")
+                    st.write("")
+                    if st.button("↺", key="btn_sinal_cam_refresh", help="Atualizar lista de câmeras"):
+                        del st.session_state.cameras_list
+                        st.rerun()
+            elif cameras:
+                st.session_state.cam_index = cameras[0]["index"]
             if st.button("▶  Iniciar câmera", width="stretch", key="sinal_cam_start"):
                 st.session_state.cam_active = True
                 st.session_state.cam_frame = None
@@ -273,7 +320,7 @@ def _render_siga_sinal(col_cam, col_info, submodo) -> None:
                 st.session_state.cam_queue = queue.Queue(maxsize=2)
                 threading.Thread(
                     target=camera_thread,
-                    args=(False, False, new_stop, st.session_state.cam_queue),
+                    args=(False, False, new_stop, st.session_state.cam_queue, st.session_state.get("cam_index", 0)),
                     daemon=True,
                 ).start()
                 st.rerun()
