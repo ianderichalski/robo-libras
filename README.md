@@ -148,13 +148,13 @@ A interface abre automaticamente no navegador. Os cinco modos de aprendizagem di
 
 ## Interface
 
-<img src="docs/screenshots/inicio.png" width="60%">
-<br><br>
-<img src="docs/screenshots/modo_aula.png" width="60%">
-<br><br>
-<img src="docs/screenshots/quiz.png" width="60%">
-<br><br>
-<img src="docs/screenshots/siga_sinal.png" width="60%">
+<img src="docs/screenshots/inicio.png" width="80%">
+<br>
+<img src="docs/screenshots/modo_aula.png" width="80%">
+<br>
+<img src="docs/screenshots/quiz.png" width="80%">
+<br>
+<img src="docs/screenshots/siga_sinal.png" width="80%">
 
 ---
 
