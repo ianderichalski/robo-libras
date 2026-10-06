@@ -34,24 +34,35 @@ def get_default_port() -> str:
         return "/dev/ttyUSB0"
 
 # conexão arduino
-def _friendly_serial_error(port, e):
-    msg = str(e).lower()
-    if "filenotfounderror" in msg or "could not open port" in msg or "o sistema não pode encontrar" in msg:
-        return f"❌ Porta **{port}** não encontrada. Verifique o cabo USB e a porta no Gerenciador de Dispositivos."
-    if "access is denied" in msg or "permissionerror" in msg:
-        return f"❌ Porta **{port}** em uso. Feche o Serial Monitor da IDE Arduino e tente novamente."
-    if "serialexception" in msg or "serial" in msg:
-        return f"❌ Erro serial em **{port}**. Verifique se o firmware **StandardFirmata** está no Arduino. (`{e}`)"
-    return f"❌ Erro ao conectar em **{port}**: `{e}`"
+def _friendly_serial_error(port: str, e: Exception) -> dict:
+    """Traduz o erro da porta serial numa mensagem curta: {"titulo", "dica"}."""
+    low = f"{type(e).__name__}: {e}".lower()
 
-def connect(port: str) -> tuple[bool, str]:
+    if any(k in low for k in ("permission", "access is denied", "acesso negado", "busy", "em uso")):
+        dica = "Feche o Monitor Serial da IDE Arduino e tente de novo."
+        if platform.system() == "Linux":
+            dica += " No Linux, pode faltar permissão: <code>sudo usermod -aG dialout $USER</code>."
+        return {"titulo": f"Porta {port} ocupada", "dica": dica}
+
+    if any(k in low for k in ("no such file", "filenotfound", "could not open port",
+                              "não pode encontrar", "cannot find", "não encontrado")):
+        return {"titulo": f"Nenhum Arduino em {port}",
+                "dica": "Confira o cabo USB e a porta, depois clique em ↺."}
+
+    return {"titulo": "O Arduino não respondeu",
+            "dica": "Verifique se o StandardFirmata está carregado na placa."}
+
+def connect(port: str) -> tuple[bool, dict | str]:
+    port = (port or "").strip()
+    if not port:
+        return False, {"titulo": "Informe a porta", "dica": "Ex.: COM4 no Windows ou /dev/ttyUSB0 no Linux."}
     try:
         servo.connect(port)
         st.session_state.arduino_ok = True
         return True, "Conectado!"
     except Exception as e:
         st.session_state.arduino_ok = False
-        return False, f"{type(e).__name__}: {e}"
+        return False, _friendly_serial_error(port, e)
 
 def disconnect() -> None:
     try:
