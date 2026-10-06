@@ -1,6 +1,7 @@
-import base64
 import streamlit as st
-from ui.styles import palette
+
+from ui.state import go_to
+from ui.components import img_b64, html, section, steps_html
 
 def render(tab) -> None:
     with tab:
@@ -10,116 +11,93 @@ def render(tab) -> None:
         _render_arduino()
 
 def _render_hero() -> None:
-    p = palette()
-    with open("docs/logo.png", "rb") as f:
-        img_b64 = base64.b64encode(f.read()).decode()
-    logo = f'<img src="data:image/png;base64,{img_b64}" style="width:120px;border-radius:16px">'
-
-    st.markdown(f"""
-    <div style="text-align:center;padding:3rem 1rem 2rem">
-        {logo}
-        <div style="font-size:2.4rem;font-weight:700;color:{p['text']};margin:20px 0 8px;letter-spacing:-0.5px">RoboLibras</div>
-        <div style="font-size:0.9rem;color:{p['text_sec']};max-width:540px;margin:0 auto;line-height:1.8">
-            Aprenda o alfabeto manual da <strong style="color:{p['text']}">Língua Brasileira de Sinais</strong>
-            de forma interativa — por texto, voz ou câmera.
+    html(f"""
+    <div class="lbr-home-hero">
+        <img src="{img_b64('docs/logo.png')}" alt="Logo RoboLibras">
+        <div class="t">Robo<span>Libras</span></div>
+        <div class="s">
+            Aprenda o alfabeto manual da <strong>Língua Brasileira de Sinais</strong>
+            de forma interativa: por texto, voz ou câmera.
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
+
+_MODES = [
+    {
+        "key": "aula", "titulo": "Modo Aula", "aba": "Aprender", "mode": "Modo Aula", "cor": "accent",
+        "desc": "Explore cada letra do alfabeto com imagem do sinal e painel de dedos. Execute na mão robótica.",
+        "svg": """<svg viewBox="0 0 40 40" fill="none" width="34" height="34">
+            <rect x="6" y="8" width="28" height="20" rx="3" stroke="currentColor" stroke-width="2.4"/>
+            <line x1="6" y1="32" x2="34" y2="32" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+            <line x1="13" y1="14" x2="27" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="13" y1="19" x2="27" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="13" y1="24" x2="21" y2="24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>""",
+    },
+    {
+        "key": "quiz", "titulo": "Quiz", "aba": "Aprender", "mode": "Quiz", "cor": "accent",
+        "desc": "Veja o sinal e identifique a letra correta entre 4 opções. Teste o que aprendeu.",
+        "svg": """<svg viewBox="0 0 40 40" fill="none" width="34" height="34">
+            <circle cx="20" cy="20" r="13" stroke="currentColor" stroke-width="2.4"/>
+            <path d="M16 16.5C16 14.3 17.8 13 20 13C22.2 13 24 14.5 24 16.5C24 18.5 22 19.5 20 21V22" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+            <circle cx="20" cy="26" r="1.5" fill="currentColor"/>
+        </svg>""",
+    },
+    {
+        "key": "soletra", "titulo": "Soletração Livre", "aba": "Aprender", "mode": "Soletração", "cor": "accent",
+        "desc": "Digite ou fale uma palavra e veja a mão robótica reproduzir cada letra em LIBRAS.",
+        "svg": """<svg viewBox="0 0 40 40" fill="none" width="34" height="34">
+            <rect x="8" y="12" width="24" height="16" rx="3" stroke="currentColor" stroke-width="2.4"/>
+            <line x1="13" y1="18" x2="27" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="13" y1="23" x2="20" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M24 27L24 34M20 34L28 34" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>""",
+    },
+    {
+        "key": "siga", "titulo": "Siga o Sinal", "aba": "Praticar", "mode": "Siga o Sinal", "cor": "accent",
+        "desc": "Use a câmera para praticar os sinais. Sequência A–Z ou aleatório com streak de acertos.",
+        "svg": """<svg viewBox="0 0 40 40" fill="none" width="34" height="34">
+            <rect x="7" y="10" width="26" height="20" rx="3" stroke="currentColor" stroke-width="2.4"/>
+            <circle cx="20" cy="20" r="5" stroke="currentColor" stroke-width="2"/>
+            <circle cx="20" cy="20" r="2" fill="currentColor"/>
+            <line x1="7" y1="14" x2="11" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>""",
+    },
+]
 
 def _render_modes() -> None:
-    p = palette()
-    st.markdown(f"""
-    <div style="font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;
-    color:{p['muted']};margin-bottom:1rem">Modos de aprendizagem</div>
-    """, unsafe_allow_html=True)
-
-    modes = [
-        {
-            "titulo": "Modo Aula",
-            "desc": "Explore cada letra do alfabeto com imagem do sinal e painel de dedos. Execute na mão robótica.",
-            "cor": "#EF6603",
-            "svg": """<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" width="36" height="36">
-                <rect x="6" y="8" width="28" height="20" rx="3" stroke="#EF6603" stroke-width="2"/>
-                <line x1="6" y1="32" x2="34" y2="32" stroke="#EF6603" stroke-width="2" stroke-linecap="round"/>
-                <line x1="13" y1="14" x2="27" y2="14" stroke="#EF6603" stroke-width="1.5" stroke-linecap="round"/>
-                <line x1="13" y1="19" x2="27" y2="19" stroke="#EF6603" stroke-width="1.5" stroke-linecap="round"/>
-                <line x1="13" y1="24" x2="21" y2="24" stroke="#EF6603" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>""",
-            "aba": "Aprender",
-        },
-        {
-            "titulo": "Quiz",
-            "desc": "Veja o sinal e identifique a letra correta entre 4 opções. Teste o que aprendeu.",
-            "cor": "#EF6603",
-            "svg": """<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" width="36" height="36">
-                <circle cx="20" cy="20" r="13" stroke="#EF6603" stroke-width="2"/>
-                <path d="M16 16.5C16 14.3 17.8 13 20 13C22.2 13 24 14.5 24 16.5C24 18.5 22 19.5 20 21V22" stroke="#EF6603" stroke-width="2" stroke-linecap="round"/>
-                <circle cx="20" cy="26" r="1.2" fill="#EF6603"/>
-            </svg>""",
-            "aba": "Aprender",
-        },
-        {
-            "titulo": "Soletração Livre",
-            "desc": "Digite ou fale uma palavra e veja a mão robótica reproduzir cada letra em LIBRAS.",
-            "cor": "#EF6603",
-            "svg": """<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" width="36" height="36">
-                <rect x="8" y="12" width="24" height="16" rx="3" stroke="#EF6603" stroke-width="2"/>
-                <line x1="13" y1="18" x2="27" y2="18" stroke="#EF6603" stroke-width="1.5" stroke-linecap="round"/>
-                <line x1="13" y1="23" x2="20" y2="23" stroke="#EF6603" stroke-width="1.5" stroke-linecap="round"/>
-                <path d="M24 27L24 34M20 34L28 34" stroke="#EF6603" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>""",
-            "aba": "Aprender",
-        },
-        {
-            "titulo": "Siga o Sinal",
-            "desc": "Use a câmera para praticar os sinais. Sequência A–Z ou aleatório com streak de acertos.",
-            "cor": "#EF6603",
-            "svg": """<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" width="36" height="36">
-                <rect x="7" y="10" width="26" height="20" rx="3" stroke="#EF6603" stroke-width="2"/>
-                <circle cx="20" cy="20" r="5" stroke="#EF6603" stroke-width="1.5"/>
-                <circle cx="20" cy="20" r="2" fill="#EF6603"/>
-                <line x1="7" y1="14" x2="11" y2="14" stroke="#EF6603" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>""",
-            "aba": "Praticar",
-        },
-    ]
+    html('<div class="lbr-home-label">Modos de aprendizagem</div>')
 
     cols = st.columns(4, gap="small")
-    for col, mode in zip(cols, modes):
+    for col, m in zip(cols, _MODES):
         with col:
-            st.markdown(f"""
-            <div style="background:{p['surface']};border:1px solid {p['border']};border-top:2px solid {mode['cor']};
-            border-radius:10px;padding:20px 16px;text-align:center;min-height:190px">
-                <div style="margin-bottom:12px">{mode['svg']}</div>
-                <div style="font-size:0.85rem;font-weight:600;color:{p['text']};margin-bottom:6px">{mode['titulo']}</div>
-                <div style="font-size:0.74rem;color:{p['text_sec']};line-height:1.6;margin-bottom:10px">{mode['desc']}</div>
-                <div style="font-size:0.62rem;color:{mode['cor']};text-transform:uppercase;letter-spacing:1px;font-weight:600">
-                    Aba {mode['aba']}
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            with st.container(key=f"lbr_mode_{m['key']}"):
+                html(f"""
+                <div class="lbr-mode-center" style="--c: var(--lbr-{m['cor']}); --c-soft: var(--lbr-{m['cor']}-soft);">
+                    <div class="lbr-mode-icon">{m['svg']}</div>
+                    <div class="lbr-mode-title">{m['titulo']}</div>
+                    <div class="lbr-mode-desc">{m['desc']}</div>
+                </div>""")
+                st.button("Abrir", key=f"open_{m['key']}", width="stretch",
+                          on_click=go_to, args=(m["aba"], m["mode"]))
 
 def _render_start() -> None:
-    p = palette()
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown(f"""
-    <div style="background:{p['hero_bg']};border:1px solid {p['border']};border-radius:10px;padding:18px 24px">
-        <div style="font-size:0.82rem;font-weight:600;color:{p['text']};margin-bottom:6px">Por onde começar?</div>
-        <div style="font-size:0.76rem;color:{p['text_sec']};line-height:1.8">
-            Acesse o <strong style="color:#EF6603">Modo Aula</strong> para explorar o alfabeto,
-            teste seus conhecimentos no <strong style="color:#EF6603">Quiz</strong> e
-            pratique com a câmera no <strong style="color:#EF6603">Siga o Sinal</strong>.
-            A maioria dos modos funciona <strong style="color:{p['text']}">sem Arduino conectado</strong>.
-        </div>
+    html("""
+    <div class="lbr-card lbr-start">
+        <h4>Por onde começar?</h4>
+        <p>
+            Acesse o <strong class="hl">Modo Aula</strong> para explorar o alfabeto,
+            teste seus conhecimentos no <strong class="hl">Quiz</strong> e
+            pratique com a câmera no <strong class="hl">Siga o Sinal</strong>.
+            A maioria dos modos funciona <strong>sem Arduino conectado</strong>.
+        </p>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 def _render_arduino() -> None:
-    p = palette()
     from ui.actions import connect, disconnect
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown('<div class="lbr-section">Configuração — Arduino (opcional)</div>', unsafe_allow_html=True)
+    section("Configuração · Arduino (opcional)")
 
     status_html = (
         '<span class="lbr-hdr-badge on"><span class="dot"></span>Arduino conectado</span>'
@@ -130,13 +108,13 @@ def _render_arduino() -> None:
     c_left, c_right = st.columns([3, 2], gap="large")
 
     with c_left:
-        st.markdown(f"""
-        <p style="font-size:0.78rem;color:{p['text_sec']};margin:0 0 10px;line-height:1.7">
-            Conecte o Arduino para usar a <strong style="color:#EF6603">Soletração Livre</strong>
+        html("""
+        <p class="lbr-text">
+            Conecte o Arduino para usar a <strong class="hl">Soletração Livre</strong>
             e reproduzir os sinais fisicamente. Os demais modos funcionam sem conexão.
         </p>
-        """, unsafe_allow_html=True)
-        st.markdown(status_html, unsafe_allow_html=True)
+        """)
+        html(f'<div class="lbr-conn-badge">{status_html}</div>')
 
         if not st.session_state.arduino_ok:
             from ui.actions import list_serial_ports, get_default_port
@@ -171,39 +149,42 @@ def _render_arduino() -> None:
             with c2:
                 cb, cc = st.columns([1, 3])
                 with cb:
-                    if st.button("↺", key="btn_refresh", help="Atualizar lista de portas"):
+                    if st.button("↺", key="btn_refresh", help="Atualizar lista de portas", width="stretch"):
                         st.rerun()
                 with cc:
-                    if st.button("Conectar", key="btn_connect", width="stretch"):
-                        ok, msg = connect(port)
+                    if st.button("Conectar", key="btn_connect", type="primary", width="stretch"):
+                        with st.spinner("Procurando o Arduino…"):
+                            ok, msg = connect(port)
+                        st.session_state.arduino_err = None if ok else msg
                         if ok:
                             st.rerun()
-                        else:
-                            st.error(msg)
+
+            _render_connect_error()
         else:
+            st.session_state.arduino_err = None
             if st.button("Desconectar", key="btn_disconnect"):
                 disconnect()
                 st.rerun()
 
     with c_right:
-        st.markdown("""
-        <div class="lbr-card">
-            <h4>Como conectar</h4>
-            <div class="lbr-step" style="margin:6px 0">
-                <div class="lbr-step-num">1</div>
-                <div class="lbr-step-text">Conecte o cabo USB ao Arduino e ao PC.</div>
-            </div>
-            <div class="lbr-step" style="margin:6px 0">
-                <div class="lbr-step-num">2</div>
-                <div class="lbr-step-text">Carregue o <strong>StandardFirmata</strong> na IDE Arduino.</div>
-            </div>
-            <div class="lbr-step" style="margin:6px 0">
-                <div class="lbr-step-num">3</div>
-                <div class="lbr-step-text">Descubra a porta no Gerenciador de Dispositivos.</div>
-            </div>
-            <div class="lbr-step" style="margin:6px 0">
-                <div class="lbr-step-num">4</div>
-                <div class="lbr-step-text">Digite a porta e clique em <strong>Conectar</strong>.</div>
-            </div>
+        passos = steps_html([
+            "Conecte o cabo USB ao Arduino e ao PC.",
+            "Carregue o <strong>StandardFirmata</strong> na IDE Arduino.",
+            "Descubra a porta no Gerenciador de Dispositivos.",
+            "Digite a porta e clique em <strong>Conectar</strong>.",
+        ])
+        html(f'<div class="lbr-card"><h4>Como conectar</h4>{passos}</div>')
+
+def _render_connect_error() -> None:
+    """Aviso curto quando a conexão com o Arduino falha."""
+    err = st.session_state.get("arduino_err")
+    if not err:
+        return
+    html(f"""
+    <div class="lbr-alert">
+        <div class="ic">🔌</div>
+        <div>
+            <div class="t">{err['titulo']}</div>
+            <p>{err['dica']} Sem Arduino, os outros modos funcionam normalmente.</p>
         </div>
-        """, unsafe_allow_html=True)
+    </div>""")
